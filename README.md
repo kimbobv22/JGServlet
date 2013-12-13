@@ -512,26 +512,35 @@ JGService는 JavaScript 상에서 <code>JGModule</code>로 호출 가능합니�
 ###JGServlet으로 서비스 요청보내기
 
 ####요청 URL 가져오기
+		
+	//요청 URL 설정
+	JGModule.putRequestURL(키값,URL);
+		
+	//요청 URL 가져오기
+	JGModule.requsetURL(키값, 서비스ID, JSON형식의 파라미터);
 
-	var requestURL_ = JGModule.requsetURL(HTTP서블릿명, 서비스ID, JSON형식의 파라미터);
+	//예제
+	JGModule.putRequestURL("test","http://localhost:8090/test");
+	var requestURL_ = JGModule.requsetURL("test", "test.test", {hello : "world"});
 	
 	// 결과값
-	서블릿명?srvID=서비스ID&파라미터화된JSON
+	http://localhost:8090/test?srvID=test.test&hello=world
+
 <br>	
 ####동기방식으로 서비스 요청하기
 	
 	// GET 방식
-	JGModule.forwardService(HTTP서블릿명, 서비스ID, JSON형식의 파라미터);
+	JGModule.forwardService(URL키값, 서비스ID, JSON형식의 파라미터);
 	
 	// POST 방식
 	// POST 방식은 내부적으로 form 태그를 생성하여 서비스를 요청합니다.
-	JGModule.postToService(HTTP서블릿명, 서비스ID, JSON형식의 파라미터, JSON형식의 폼속성값);
+	JGModule.postToService(URL키값, 서비스ID, JSON형식의 파라미터, JSON형식의 폼속성값);
 <br>
 ####비동기방식으로 서비스 요청하기
 
 JQuery 라이브러리를 이용하여 서비스를 요청합니다.
 
-	JGModule.ajax(서블릿명, 서비스ID, jQueryAJAXJSON옵션);
+	JGModule.ajax(URL키값, 서비스ID, jQueryAJAXJSON옵션);
 	
 	//예제
 	JGModule.ajax("test", "test.test", {
@@ -558,7 +567,7 @@ JGServlce에 파일을 Multipart형식으로 업로드하거나 삭제 할 수 �
 업로드 결과반환에 대한 자세한 내용은 [여기](#javaIndex2-1)를 참고하세요.
 
 	// inputFile태그 인자는 생략가능, 생략 시, 파일선태 팝업이 나타납니다.
-	JGModule.fileUpload(파일서블릿명, JSON옵션, inputFile태그);
+	JGModule.fileUpload(파일URL키값, JSON옵션, inputFile태그);
 	
 ####파일업로드 JSON 옵션
 
