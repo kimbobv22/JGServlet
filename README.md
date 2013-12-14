@@ -454,8 +454,9 @@ JGDBConnection의 자세한 정보는 [여기](https://github.com/kimbobv22/JGDB
 	workType=get
 	path=파일경로
 	mimeType=mime형식(생략가능)
-	makeThumb=이미지일 경우 썸네일 제작여부(생략가능)
-	resizeRatio=썸네일 제작 시, 리사이즈 비율(생략가능)
+	resizeRatio=이미지 받기 시, 리사이즈 비율(생략가능)
+	resizeWidth=이미지 받기 시, 리사이즈 가로크기(생략가능)
+	resizeHeight=이미지 받기 시, 리사이즈 세로크기(생략가능)
 <br>
 ####파일 삭제
 
