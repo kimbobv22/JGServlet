@@ -100,8 +100,12 @@
 	// 파일업로드/다운로드 경로는 절대경로입니다.
 	jg.common.fileUploadRootPath=/파일업로드경로
 	
-	//파일 업로드 시, 정규식으로 파일 업로드를 제한할 수 있습니다.
+	// 파일 업로드 시, 정규식으로 파일 업로드를 제한할 수 있습니다.
 	jg.common.fileUploadAcceptRegexp=[\w\-\.]+[\.](php|jsp|asp)
+	
+	// 이미지파일 업로드 시, 이미지 압축여부입니다.
+	// true일 경우 모든 이미지는 jpg 형식으로 지정됩니다.
+	jg.common.compressionUploadImage=[true|false]
 	
 	// DB 접속을 위한 설정입니다. 
 	// 복수의 DB접속환경을 정의할 수 있습니다.
