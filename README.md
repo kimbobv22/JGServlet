@@ -182,8 +182,9 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 환경설정 시 정의된 XML경로로부터 자동으로 서비스XML파일을 해석, 적재합니다.<br><br>
 
 서비스 호출은 서비스키를 통하여 이루어집니다.<br>
-서비키 형식은 <code>서비스파일명.서비스ID</code>입니다.<br>
-서비스키 파라미터명은 <code>srvID</code>입니다.
+서비스키 파라미터명은 <code>srvMap,srvID</code>입니다.<br>
+<code>srvMap</code>은 서비스XML의 파일명입니다.<br>
+<code>srvID</code>은 해당 서비스ID 입니다.<br>
 
 	//test.xml
 	<services>
@@ -195,7 +196,7 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 	</services>
 	
 	// 서비스 호출 시
-	http://URL주소?srvID=testService
+	http://URL주소?srvMap=test&srvID=service
 
 ###서비스XML 작성방법
 <br>
@@ -522,34 +523,56 @@ JGService는 JavaScript 상에서 <code>JGModule</code>로 호출 가능합니�
 	JGModule.putRequestURL(키값,URL);
 		
 	//요청 URL 가져오기
-	JGModule.requsetURL(키값, 서비스ID, JSON형식의 파라미터);
+	JGModule.requsetURL(키값, JSON형식의 파라미터);
 
 	//예제
 	JGModule.putRequestURL("test","http://localhost:8090/test");
-	var requestURL_ = JGModule.requsetURL("test", "test.test", {hello : "world"});
+	var requestURL_ = JGModule.requsetURL("test", {
+		srvMap : "test"
+		,srvID : "testId"
+		,hello : "world"
+	});
 	
 	// 결과값
-	http://localhost:8090/test?srvID=test.test&hello=world
+	http://localhost:8090/test?srvMap=test&srvID=testId&hello=world
+	
+필요에 따라 srvMap,srvID를 포함하여 JSON형식의 파라미터를 만들 수 있습니다.
+
+	JGModule.makeServiceKey(서비스맵,서비스ID,JSON파라미터);
+	
+	// 예제
+	var result_ = JGModule.makeServiceKey("test","testID",{hello : "world"});
+	
+	// 결과값
+	{
+		srvMap : "test"
+		,srvID : "testID"
+		,hello : "world"
+	}
 
 <br>	
 ####동기방식으로 서비스 요청하기
 	
 	// GET 방식
-	JGModule.forwardService(URL키값, 서비스ID, JSON형식의 파라미터);
+	JGModule.forwardService(URL키값, JSON형식의 파라미터);
 	
 	// POST 방식
 	// POST 방식은 내부적으로 form 태그를 생성하여 서비스를 요청합니다.
-	JGModule.postToService(URL키값, 서비스ID, JSON형식의 파라미터, JSON형식의 폼속성값);
+	JGModule.postToService(URL키값, JSON형식의 파라미터, JSON형식의 폼속성값);
 <br>
 ####비동기방식으로 서비스 요청하기
 
 JQuery 라이브러리를 이용하여 서비스를 요청합니다.
 
-	JGModule.ajax(URL키값, 서비스ID, jQueryAJAXJSON옵션);
+	JGModule.ajax(URL키값, jQueryAJAXJSON옵션);
 	
 	//예제
-	JGModule.ajax("test", "test.test", {
-		success : function(result_){
+	JGModule.ajax("test", {
+		data : {
+			srvMap : "test"
+			srvID : "testId"
+		}
+		,success : function(result_){
 		
 			...
 			
