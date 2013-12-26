@@ -217,7 +217,7 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 	</resultPages>
 	
 	// 서비스 정의
-	<service serviceID="서비스ID" actionClassName="액션클래스키값" mappingMethod="매핑메소드명" forwardServiceID="포워딩서비스ID" isPrivate="service사유여부">
+	<service serviceID="서비스ID" actionClassName="액션클래스키값" mappingMethod="매핑메소드명" isPrivate="service사유여부">
 		<result code="결과코드" pageName="결과페이지키값"/>
 		...
 	</service>
@@ -271,14 +271,6 @@ JGServlet의 모든 Http 요청은 서비스를 통하여 이루어집니다.<br
 
 	// 기본 서비스 정의
 	<service serviceID="서비스ID" actionClassName="액션클래스키값" mappingMethod="매핑메소드명">
-		<result code="결과코드" pageName="결과페이지키값"/>
-		<result code="결과코드">결과페이지경로를 직접 입력</result>
-		<result code="결과코드" serviceID="다른 서비스호출"/>
-		...
-	</service>
-	
-	// 서비스 포워딩 정의
-	<service serviceID="서비스ID" forwardServiceID="포워딩서비스ID">
 		<result code="결과코드" pageName="결과페이지키값"/>
 		<result code="결과코드">결과페이지경로를 직접 입력</result>
 		<result code="결과코드" serviceID="다른 서비스호출"/>

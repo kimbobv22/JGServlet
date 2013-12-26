@@ -15,7 +15,6 @@
 <!ATTLIST page name CDATA #REQUIRED>
 
 <!ATTLIST service serviceID CDATA #REQUIRED>
-<!ATTLIST service forwardServiceID CDATA #REQUIRED>
 <!ATTLIST service actionClassName CDATA #IMPLIED>
 <!ATTLIST service mappingMethod CDATA #IMPLIED>
 
