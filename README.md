@@ -13,15 +13,13 @@
 
 [비지니스로직 구현하기](#javaIndex1)<br>
 
-[파일 업로드/다운로드가 필요할 때](#javaIndex2)<br>
-
 ###[JavaScript 메뉴얼](#forJavascript)
 
 [라이브러리 개요](#JavaScptSummary)<br>
 [라이브러리 사용을 위한 환경](#JavaScptEnvironment)<br>
 
 [JGService 기본기능](#javaScptIndex1-1)<br>
-[JGServlet으로 파일업로드/삭제하기](#javaScptIndex2)<br>
+[JGServlet으로 Multipart 요청하기](#javaScptIndex2)<br>
 
 <a name="forJava"></a>
 #JAVA 메뉴얼
@@ -46,7 +44,7 @@
 		- 요청/응답 제어 -> JGActionHandler -(인스턴스호출)-> JGAction
 		
 	// 파일 업로드/다운로드 제어(Multipart)
-	JGHttpServlet
+	JGFileServlet
 	
 	// Context 리스너
 	JGMainServletContextListener -(호출/적재)-> JGMainLoader
@@ -344,19 +342,16 @@ JGServlet의 모든 Http 요청은 서비스를 통하여 이루어집니다.<br
 ###JGAction 상속구현으로 비지니스로직 구축
 
 JGAction 상속구현하여 서비스XML에 매핑함으로 비지니스로직을 호출할 수 있습니다.<br>
+JGAction을 상속구현함으로 파일 다운로드/업로드 등 기능을 간편하게 이용할 수 있습니다.<br>
 비지니스로직 구축에 대한 자세한 내용은 [여기](#javaIndex1-1)를 참조하세요.
-<br><br>
-###파일 업로드/다운로드가 필요한 경우
-
-파일 업로드/다운로드가 필요한 경우 JGFileServlet을 상속구현하여 web.xml에 매핑시킵니다.<br>
-파일 업로드/다운로드에 대한 자세한 정보는 [여기](#javaIndex2)를 참조하세요.
+<br>
 
 <a name="javaIndex1"></a>
 ##비지니스로직 구현하기
 
 액션클래스를 통하여 비지니스로직을 구현하도록 설계되어 있기 때문에<br>
-비지니스로직은 액션클래스를 통하여 구현하는 것을 권장합니다.
-<br><br>
+비지니스로직은 액션클래스를 통하여 구현하는 것을 권장합니다.<br>
+<br>
 
 <a name="javaIndex1-1"></a>
 ###JGAction 상속구현으로 비지니스로직 구축
@@ -385,8 +380,14 @@ JGAction 상속구현하여 서비스XML에 매핑함으로 비지니스로직�
 		}
 		
 		// 이곳에 비지니스로직을 담당하는 메소드를 정의합니다.
-		public int yourLogicMethod(JGServiceBox box_) throws Exception{
-		...
+		// Multipart가 아닌 경우는 아래와 같습니다.
+		public int yourLogicMethod1(JGServiceBox box_) throws Exception{
+			...
+		}
+		
+		// Multipart일 경우는 아래와 같습니다.
+		public int yourLogicMethod2(JGMultipartServiceBox box_) throws Exception{
+			...
 		}
 		...
 	}
@@ -399,8 +400,9 @@ JGAction 상속구현 시, 메소드 리턴값을 통하여 서비스 결과제�
 비지니스로직 수행의 결과값에 따른 결과페이지 제어의 흐름은 [여기](#javaServiceDefinition)를 참조하세요.<br><br>
 ###JGServiceBox?
 
-JGServiceBox는 HttpServletRequeset, HttpServletResponse를 담고 있는 객체입니다.<br>
-Client 요청과 함게 생성됩니다.<br>
+JGServiceBox는 HttpServletRequeset, HttpServletResponse를 담고 있는 객체이며 Client 요청과 함게 생성됩니다.<br>
+또한, JGServiceBox는 Multipart 요청 시, Multipart에 대한 정보를 가질 수 있습니다.<br>
+Multipart에 대한 자세한 사항은 [여기](#javaIndex2)를 참고하세요 
 
 ###AJAX요청에 따른 결과값 쓰기
 
@@ -445,62 +447,36 @@ JGDBConnection의 자세한 정보는 [여기](https://github.com/kimbobv22/JGDB
 			JGDBConnection connection2_ = getDBConnection(색인);
 		}
 	}
+	
+###파일 업로드/다운로드가 필요한 경우
 
-<a name="javaIndex2"></a>
-##파일 업로드/다운로드가 필요할 때
+####파일업로드
+파일 업로드는 Multipart로 진행됩니다.<br>
+JGAction 비지니스로직에서 JGServiceBox에 Multipart 정보를 얻을 수 있습니다.<br>
+JGServiceBox에서 Multipart를 요청한 시점에 업로드는 자동진행됩니다.<br>
+Multipart요청에 관한 정보는 [여기](#javaIndex1-1)를 참고하세요.
 
-파일 업로드/다운로드이 필요할 때, JGFileServlet이나 JGFileServlet을 상속구현하여 web.xml에 등록해야 합니다.<br>
-
-파일 업로드/다운로드의 뿌리경로는 기본환경설정에 따릅니다.<br>
-기본환경설정에 관한 자세한 내용은 [여기](#howToWriteConfiguration)를 참조하세요.<br>
-
-###파일 다운로드 및 삭제
-
-파일 다운로드 및 삭제 요청은 매핑된 File Servlet에 get방식으로 받습니다.<br>
-파라미터에 따라 작업방식이 결정됩니다.
-
-####파일 다운로드
-
-아래의 파라미터 형식으로 요청하여 파일 다운로드를 진행합니다
-
-#####다운로드 파라미터 형식
-	workType=get
-	path=파일경로
-	mimeType=mime형식(생략가능)
-	resizeRatio=이미지 받기 시, 리사이즈 비율(생략가능)
-	resizeWidth=이미지 받기 시, 리사이즈 가로크기(생략가능)
-	resizeHeight=이미지 받기 시, 리사이즈 세로크기(생략가능)
-<br>
-####파일 삭제
-
-파일삭제는 요청 후, 결과값을 JSON으로 반환합니다.
-
-#####삭제 파라미터 형식
-	workType=del
-	path=파일경로
-#####JSON 결과값
-	{
-		result : 결과코드(성공 : 0, 오류 : 0)
-		,message : 오류가 있을 경우 오류메세지
+	// 아래와 같이 Multipart 데이타를 해석할 수 있습니다.
+	// 만약 해당 요청이 Multipart형식이 아니라면 Exception이 발생합니다.
+	public int yourLogic(JGServiceBox serviceBox_) throws Exception{
+		JGMultipartData mpData_ = serviceBox_.multipartData();
+		
+		// 업로드된 파일결과상태 확인하기
+		JGMultipartUploadResult result_ = mpData_.getUploadResult(색인);
+		
+		// 현재 업로드 상태확인하기
+		JGUploadProgressStatus status_ = mpData_.getUploadProgressStatus();
+		
+		// 분석된 폼필드(파라미터) 값 가져오기 
+		String value_ = mpData_.getFormFieldValue(key_);
 	}
-<br>
-<a name="javaIndex2-1"></a>
-###파일 업로드
 
-파일 업로드는 JGService 라이브러리를 이용하여 Multipart로 진행됩니다.<br>
-파일 업로드에 대한 자세한 방법은 [여기](#javaScptIndex2)를 참고하세요.<br>
+####파일다운로드 및 삭제
+파일 다운로드 및 삭제는 JGFileHandler를 통해 진행됩니다.
 
-업로드 파일의 이름은 UUID 형식으로 자동으로 변경됩니다.<br>
-파일 업로드가 완료되면 결과값을 JSON으로 반환합니다.
+	JGFileHandler.deleteFile(filePath_);
+	JGFileHandler.sendFile();
 
-#####JSON 결과값
-
-	{
-		orgPath : 원본파일경로
-		uploadPath : 업로드파일경로
-		size : 파일사이즈
-	}
-<br>
 
 <a name="forJavascript"></a>
 #JavaScript 메뉴얼
@@ -593,29 +569,7 @@ JQuery 라이브러리를 이용하여 서비스를 요청합니다.
 	
 
 <a name="javaScptIndex2"></a>
-##JGServlet에 파일업로드/삭제하기
+##JGServlet으로 Multipart 요청하기
 
-JGServlce에 파일을 Multipart형식으로 업로드하거나 삭제 할 수 있습니다.<br>
+	JGModule.sendMultipart(URL키값, JSON파라미터, 옵션, input태그);
 	
-###파일 업로드
-
-파일업로드는 비동기로 진행되며, 결과값은 JSON으로 반환됩니다.<br>
-업로드 결과반환에 대한 자세한 내용은 [여기](#javaIndex2-1)를 참고하세요.
-
-	// inputFile태그 인자는 생략가능, 생략 시, 파일선태 팝업이 나타납니다.
-	JGModule.fileUpload(파일URL키값, JSON옵션, inputFile태그);
-	
-####파일업로드 JSON 옵션
-
-	{
-		path : 업로드경로
-		,multiple : 다중파일선택여부(파일 선택 시)
-		,accept : 선택가능한 파일 형식(파일 선택 시)
-		,progress : function(파일색인,업로드된바이트수,전체바이트수){
-		
-			...
-			
-		}(생략가능)
-		,progressCheckDelay : process 체크 딜레이 시간(생략가능)
-	}
-
