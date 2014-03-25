@@ -21,6 +21,8 @@
 [JGService 기본기능](#javaScptIndex1-1)<br>
 [JGServlet으로 Multipart 요청하기](#javaScptIndex2)<br>
 
+[API 문서](http://kimbobv22.github.io/kimbobv22/JGServlet/doc/javaScript/index.html)
+
 <a name="forJava"></a>
 #JAVA 메뉴얼
 
@@ -515,13 +517,13 @@ JGService는 JavaScript 상에서 <code>JGService</code>로 호출 가능합니�
 ####요청 URL 가져오기
 		
 	//요청 URL 설정
-	JGService.putRequestURL(키값,URL);
+	JGService.requestURL(키값,URL문자열);
 		
 	//요청 URL 가져오기
 	JGService.requsetURL(키값, JSON형식의 파라미터);
 
 	//예제
-	JGService.putRequestURL("test","http://localhost:8090/test");
+	JGService.requestURL("test","http://localhost:8090/test");
 	var requestURL_ = JGService.requsetURL("test", {
 		srvMap : "test"
 		,srvID : "testId"
@@ -533,10 +535,10 @@ JGService는 JavaScript 상에서 <code>JGService</code>로 호출 가능합니�
 	
 필요에 따라 srvMap,srvID를 포함하여 JSON형식의 파라미터를 만들 수 있습니다.
 
-	JGService.makeServiceKey(서비스맵,서비스ID,JSON파라미터);
+	JGService.serviceKey(서비스맵,서비스ID,JSON파라미터);
 	
 	// 예제
-	var result_ = JGService.makeServiceKey("test","testID",{hello : "world"});
+	var result_ = JGService.serviceKey("test","testID",{hello : "world"});
 	
 	// 결과값
 	{
@@ -552,7 +554,7 @@ JGService는 JavaScript 상에서 <code>JGService</code>로 호출 가능합니�
 	JGService.forwardService(URL키값, JSON형식의 파라미터);
 	
 	// POST 방식
-	JGService.postToService(URL키값, JSON형식의 파라미터);
+	JGService.postService(URL키값, JSON형식의 파라미터);
 <br>
 ####비동기방식으로 서비스 요청하기
 
