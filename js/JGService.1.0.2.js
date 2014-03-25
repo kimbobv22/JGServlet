@@ -33,7 +33,7 @@
 		}
 	};
 	
-	var JGModule = window.JGModule = {
+	var JGService = window.JGService = {
 		_requestURLs : {}
 		,putRequestURL : function(key_, url_){
 			this._requestURLs[key_] = url_;
@@ -162,9 +162,11 @@
 				cookies_ += ";expires=" + expire_.toGMTString() + ";";
 			}
 			document.cookie = cookies_;
+		},removeCookie : function(name_){
+			document.cookie = name_ + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 		}
 	};
 	
-	return JGModule;
+	return JGService;
 	
 })(window,$);

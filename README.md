@@ -508,21 +508,21 @@ JGService for JavaScript 라이브러리는 보다 편리하게 JGservlet과 연
 <a name="javaScptIndex1-1"></a>
 ##JGService 기본기능
 
-JGService는 JavaScript 상에서 <code>JGModule</code>로 호출 가능합니다.
+JGService는 JavaScript 상에서 <code>JGService</code>로 호출 가능합니다.
 
 ###JGServlet으로 서비스 요청보내기
 
 ####요청 URL 가져오기
 		
 	//요청 URL 설정
-	JGModule.putRequestURL(키값,URL);
+	JGService.putRequestURL(키값,URL);
 		
 	//요청 URL 가져오기
-	JGModule.requsetURL(키값, JSON형식의 파라미터);
+	JGService.requsetURL(키값, JSON형식의 파라미터);
 
 	//예제
-	JGModule.putRequestURL("test","http://localhost:8090/test");
-	var requestURL_ = JGModule.requsetURL("test", {
+	JGService.putRequestURL("test","http://localhost:8090/test");
+	var requestURL_ = JGService.requsetURL("test", {
 		srvMap : "test"
 		,srvID : "testId"
 		,hello : "world"
@@ -533,10 +533,10 @@ JGService는 JavaScript 상에서 <code>JGModule</code>로 호출 가능합니�
 	
 필요에 따라 srvMap,srvID를 포함하여 JSON형식의 파라미터를 만들 수 있습니다.
 
-	JGModule.makeServiceKey(서비스맵,서비스ID,JSON파라미터);
+	JGService.makeServiceKey(서비스맵,서비스ID,JSON파라미터);
 	
 	// 예제
-	var result_ = JGModule.makeServiceKey("test","testID",{hello : "world"});
+	var result_ = JGService.makeServiceKey("test","testID",{hello : "world"});
 	
 	// 결과값
 	{
@@ -549,19 +549,19 @@ JGService는 JavaScript 상에서 <code>JGModule</code>로 호출 가능합니�
 ####동기방식으로 서비스 요청하기
 	
 	// GET 방식
-	JGModule.forwardService(URL키값, JSON형식의 파라미터);
+	JGService.forwardService(URL키값, JSON형식의 파라미터);
 	
 	// POST 방식
-	JGModule.postToService(URL키값, JSON형식의 파라미터);
+	JGService.postToService(URL키값, JSON형식의 파라미터);
 <br>
 ####비동기방식으로 서비스 요청하기
 
 JQuery 라이브러리를 이용하여 서비스를 요청합니다.
 
-	JGModule.ajax(URL키값, jQueryAJAXJSON옵션);
+	JGService.ajax(URL키값, jQueryAJAXJSON옵션);
 	
 	//예제
-	JGModule.ajax("test", {
+	JGService.ajax("test", {
 		data : {
 			srvMap : "test"
 			srvID : "testId"
@@ -581,5 +581,5 @@ JQuery 라이브러리를 이용하여 서비스를 요청합니다.
 <a name="javaScptIndex2"></a>
 ##JGServlet으로 Multipart 요청하기
 
-	JGModule.sendMultipart(URL키값, JSON파라미터, 옵션, input태그);
+	JGService.sendMultipart(URL키값, JSON파라미터, 옵션, input태그);
 	

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.jg.action.JGActionKeyword;
+import com.jg.util.JGServletUtils;
 import com.jg.vo.JGDataset;
 
 public class JGServiceBox{
@@ -101,5 +102,19 @@ public class JGServiceBox{
 	}
 	public void removeCookie(String name_){
 		putCookie(name_, null, 0);
+	}
+	
+	public void forward(String url_) throws Exception{
+		_request.getRequestDispatcher(url_).forward(_request, _response);
+	}
+	public void forward(JGServiceKey serviceKey_) throws Exception{
+		forward(JGServletUtils.getServiceUrl(_request)+"?"+serviceKey_.makeServiceKeyParameters());
+	}
+	
+	public void redirect(String url_) throws Exception{
+		_response.sendRedirect(url_);
+	}
+	public void redirect(JGServiceKey serviceKey_) throws Exception{
+		redirect(JGServletUtils.getServiceUrl(_request)+"?"+serviceKey_.makeServiceKeyParameters());
 	}
 }

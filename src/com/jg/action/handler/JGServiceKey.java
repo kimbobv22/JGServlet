@@ -38,10 +38,22 @@ public class JGServiceKey {
 		return _mapName+JGActionKeyword.STR_SERVICEID_SPLITTER+_serviceID;
 	}
 	
+	public String makeServiceKeyParameters(){
+		return JGServiceKey.makeServiceKeyParameters(_mapName, _serviceID);
+	}
+	
 	static public JGServiceKey makeKey(HttpServletRequest request_){
 		return new JGServiceKey(request_.getParameter(JGActionKeyword.STR_SERVICEMAP),request_.getParameter(JGActionKeyword.STR_SERVICEID));
 	}
 	static public boolean isFullKey(String key_){
 		return !JGStringUtils.isBlank(key_) && key_.indexOf(JGActionKeyword.STR_SERVICEID_SPLITTER) >= 0;
+	}
+	
+	static public String makeServiceKeyParameters(String srvMap_, String srvID_){
+		return (JGActionKeyword.STR_SERVICEMAP+"="+srvMap_+"&"+JGActionKeyword.STR_SERVICEID+"="+srvID_);
+	}
+	static public String makeServiceKeyParameters(String fullKey_){
+		JGServiceKey serviceKey_ = new JGServiceKey(fullKey_);
+		return makeServiceKeyParameters(serviceKey_._mapName, serviceKey_._serviceID);
 	}
 }
