@@ -21,7 +21,7 @@
 [JGService 기본기능](#javaScptIndex1-1)<br>
 [JGServlet으로 Multipart 요청하기](#javaScptIndex2)<br>
 
-[API 문서](http://kimbobv22.github.io/kimbobv22/JGServlet/doc/javaScript/index.html)
+[API 문서](http://kimbobv22.github.io/JGServlet/doc/javaScript/index.html)
 
 <a name="forJava"></a>
 #JAVA 메뉴얼
