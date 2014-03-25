@@ -416,24 +416,8 @@ public class JGActionHandler{
 		return makeAction(getService(serviceKey_,false));
 	}
 	private Object _processAction(JGServiceBox serviceBox_, JGService service_) throws Exception{
-		JGActionSessionMap actionMap_ = JGActionSessionMap.actionSessionMap(serviceBox_.getSession());
-		if(actionMap_ == null){
-			actionMap_ = new JGActionSessionMap();
-			JGActionSessionMap.putActionMap(serviceBox_.getSession(), actionMap_);
-		}
-		
-		JGAction action_ = null;
-		try{
-			action_ = actionMap_.getAction(service_.getActionClassFromParentMap().getMappingClass());
-		}catch(ClassNotFoundException ex_){
-			throw new Exception("does not exist Action class", ex_);
-		}
-		
-		if(action_ == null){
-			action_ = makeAction(service_);
-			actionMap_.putAction(action_);
-			JGReflectionUtils.invokeMethod(action_, "initAction", serviceBox_);
-		}
+		JGAction action_ = makeAction(service_);
+		JGReflectionUtils.invokeMethod(action_, "initAction", serviceBox_);
 		
 		return JGReflectionUtils.invokeMethod(action_, action_.getClass().getSuperclass()
 				, "process", new Object[]{service_, serviceBox_});

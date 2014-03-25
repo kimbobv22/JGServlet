@@ -20,6 +20,7 @@ public abstract class JGMainServlet extends HttpServlet{
 	protected JGServletErrorHandlerDef getErrorHandler(){
 		return _errorHandler;
 	}
+	
 	public void setErrorHandler(JGServletErrorHandlerDef errorHandler_){
 		_errorHandler = errorHandler_;
 	}

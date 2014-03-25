@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import com.jg.action.handler.JGActionSessionMap;
 import com.jg.action.handler.JGService;
 import com.jg.action.handler.JGServiceBox;
 import com.jg.action.handler.JGServiceKey;
@@ -14,11 +13,6 @@ import com.jg.main.JGMainConfig;
 import com.jg.util.JGReflectionUtils;
 
 public abstract class JGAction{
-	
-	protected boolean _actionInstantiated = true;
-	protected void setActionInstantiated(boolean bool_){
-		_actionInstantiated = bool_;
-	}
 	
 	private ArrayList<JGDBConnection> _DBConnectionList  = new ArrayList<JGDBConnection>();
 	
@@ -53,13 +47,7 @@ public abstract class JGAction{
 		}
 		
 		try{
-			Integer resultCode_ = (Integer)JGReflectionUtils.invokeMethod(this, service_.getMappingMethod(), serviceBox_);
-			
-			if(!_actionInstantiated){
-				destoryAction(serviceBox_);
-			}
-			
-			return resultCode_;
+			return (Integer)JGReflectionUtils.invokeMethod(this, service_.getMappingMethod(), serviceBox_);
 		}catch(IllegalArgumentException ex_){
 			throw new Exception("Illegal argument for action method",ex_);
 		}catch(IllegalAccessException ex_){
@@ -81,10 +69,6 @@ public abstract class JGAction{
 		}catch(Exception ex_){}finally{
 			super.finalize();
 		}
-	}
-	
-	protected void destoryAction(JGServiceBox serviceBox_){
-		JGActionSessionMap.actionSessionMap(serviceBox_.getSession()).removeAction(getClass());
 	}
 	
 	abstract protected void initAction(JGServiceBox firstServiceBox_);

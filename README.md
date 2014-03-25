@@ -13,6 +13,8 @@
 
 [비지니스로직 구현하기](#javaIndex1)<br>
 
+[API 문서](http://kimbobv22.github.io/JGServlet/doc/java/index.html)
+
 ###[JavaScript 메뉴얼](#forJavascript)
 
 [라이브러리 개요](#JavaScptSummary)<br>
