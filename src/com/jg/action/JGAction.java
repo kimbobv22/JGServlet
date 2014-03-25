@@ -71,7 +71,7 @@ public abstract class JGAction{
 		}
 	}
 	
-	abstract protected void initAction(JGServiceBox firstServiceBox_);
+	protected void initAction(JGServiceBox firstServiceBox_){/*override me*/}
 	protected void cleanup(){/*override me*/}
 	protected void didCaughtException(JGActionException actionError_) throws Exception{
 		throw actionError_;
