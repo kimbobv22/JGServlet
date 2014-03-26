@@ -1,4 +1,4 @@
-#JGServlet for JAVA
+#JGServlet for JAVA(Version 2.0.0)
 ###with JGService for JavaScript
 ###사용하기 전, 반드시 라이센스를 확인하세요
 
@@ -67,7 +67,7 @@
 	JGStringUtils
 	
 	// 환경설정
-	JGMainConfig <-(해석/적재)- JGConfig.properties
+	JGMainConfig <-(해석/적재)- JGConfig.xml
 	
 <a name="JavaEnvironment"></a>
 ##라이브러리 사용을 위한 환경
@@ -87,49 +87,51 @@
 톰캣 프로젝트에 라이브러리 jar 파일을 추가합니다.
 
 라이브러리 사용을 위한 환경설정번들파일을 수정합니다.<br>
-번들파일은 반드시 WEB-INF/classes/ 경로에 존재해야만 합니다.<br>
-번들파일이름은 반드리 JGConfig.properties이어야 합니다.
+번들파일은 반드시 WEB-INF/ 경로에 존재해야만 합니다.<br>
+번들파일이름은 반드리 JGConfig.xml이어야 합니다.
 <a name="howToWriteConfiguration"></a>
-####환경설정파일
+####환경설정파일 형식
 
-	jg.common.debugLevel=디버그레발
-	jg.common.characterEncoding=글자엔코딩 
-	
-	// XML파일 최소뿌리경로는 WEB-INF/classes/ 입니다.
-	jg.common.serviceDirectoryPath=서비스XML파일경로
-	jg.common.DBXMLQueryDirectoryPath=DB질의문XML파일경로
-	
-	// 파일업로드/다운로드 경로는 절대경로입니다.
-	jg.common.fileUploadRootPath=/파일업로드경로
-	
-	// 파일 업로드 시, 정규식으로 파일 업로드를 제한할 수 있습니다.
-	jg.common.fileUploadAcceptRegexp=[\w\-\.]+[\.](php|jsp|asp)
-	
-	// 이미지파일 업로드 시, 이미지 압축여부입니다.
-	// true일 경우 모든 이미지는 jpg 형식으로 지정됩니다.
-	jg.common.compressionUploadImage=[true|false]
-	
-	// DB 접속을 위한 설정입니다. 
-	// 복수의 DB접속환경을 정의할 수 있습니다.
-	// 형식 : jg.db.config.000, jg.db.config.001, jg.db.config....
-	jg.db.config.000.JDBCClassName=JDBC클래스명
-	jg.db.config.000.url=DB URL
-	jg.db.config.000.userName=사용자명
-	jg.db.config.000.password=사용자암호
-	jg.db.config.000.characterEncoding=글자엔코딩
-	
-	jg.db.config.001.JDBCClassName=JDBC클래스명
-	jg.db.config.001.url=DB URL
-	jg.db.config.001.userName=사용자명
-	jg.db.config.001.password=사용자암호
-	jg.db.config.001.characterEncoding=글자엔코딩
-	
-	...
-	
-	// 필요에 따라 사용자지정 환경설정을 정의할 수 있습니다.
-	// 형식 : jg.custom.환경설정명
-	jg.custom.myConfig1=...
-	jg.custom.myConfig2=...
+	<config>
+		/**
+		 * 기본 환경설정
+		 */
+		<common>
+			<debug-level>1</debug-level> //디버그레벨
+			<character-encoding>UTF-8</character-encoding> //문자인코딩
+			<dirpath-service>webService/</dirpath-service> //서비스XML경로
+			<dirpath-query>queryXml/</dirpath-query> //쿼리XML경로
+			<file-root-path>/test/</file-root-path> //파일업로드기본경로
+			<file-reject-regexp>[\w\-\.]+[\.](php|jsp|asp)</file-reject-regexp> //파일거부표현식
+			<file-image-compression>true</file-image-compression> //이미지 압축여부
+		</common>
+		
+		/**
+		 * 데이타베이스 접속 환경을 정의합니다.
+		 * 데이타베이스 접속 환경은 1개 이상 정의할 수 있습니다.
+		 */
+		<database name="main" isPrimary="true">
+			<jdbc-class>oracle.jdbc.driver.OracleDriver</jdbc-class>
+			<url>jdbc:oracle:thin:@ora-002.cafe24.com:1521:orcl</url>
+			<user-name>test</user-name>
+			<password>test</password>
+			<character-encoding>UTF-8</character-encoding>
+		</database>
+		<database name="sub">
+			<jdbc-class>oracle.jdbc.driver.OracleDriver</jdbc-class>
+			<url>jdbc:oracle:thin:@ora-002.cafe24.com:1521:orcl</url>
+			<user-name>test</user-name>
+			<password>test</password>
+			<character-encoding>UTF-8</character-encoding>
+		</database>
+		
+		/**
+		 * 사용자 정의설정을 정의합니다.
+		 */
+		<custom>
+			<option name="customValue">customValue</option>
+		</custom>
+	</config>
 
 환경설정을 수정한 후, 서비스제어를 위한 Servlet과 를 상속받아 구현합니다.<br>
 
@@ -184,11 +186,9 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 환경설정 시 정의된 XML경로로부터 자동으로 서비스XML파일을 해석, 적재합니다.<br><br>
 
 서비스 호출은 서비스키를 통하여 이루어집니다.<br>
-서비스키 파라미터명은 <code>srvMap,srvID</code>입니다.<br>
-<code>srvMap</code>은 서비스XML의 파일명입니다.<br>
-<code>srvID</code>은 해당 서비스ID 입니다.<br>
+서비스키는 서비스맵과 서비스ID로 구성되어 있으며 서비스키의 서비스맵은 __Servlet Context명__에 매핑되고, 서비스키의 서비스ID는 요청파라미터 __srvID__에 매핑됩니다.<br>
 
-	//test.xml
+	// {serviceXML기본경로}/main/test.xml
 	<services>
 		
 		<service serviceID="service">
@@ -198,7 +198,7 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 	</services>
 	
 	// 서비스 호출 시
-	http://URL주소?srvMap=test&srvID=service
+	http://URL주소/main/test?srvID=service
 
 ###서비스XML 작성방법
 <br>
@@ -527,27 +527,12 @@ JGService는 JavaScript 상에서 <code>JGService</code>로 호출 가능합니�
 	//예제
 	JGService.requestURL("test","http://localhost:8090/test");
 	var requestURL_ = JGService.requsetURL("test", {
-		srvMap : "test"
-		,srvID : "testId"
+		srvID : "testId"
 		,hello : "world"
 	});
 	
 	// 결과값
-	http://localhost:8090/test?srvMap=test&srvID=testId&hello=world
-	
-필요에 따라 srvMap,srvID를 포함하여 JSON형식의 파라미터를 만들 수 있습니다.
-
-	JGService.serviceKey(서비스맵,서비스ID,JSON파라미터);
-	
-	// 예제
-	var result_ = JGService.serviceKey("test","testID",{hello : "world"});
-	
-	// 결과값
-	{
-		srvMap : "test"
-		,srvID : "testID"
-		,hello : "world"
-	}
+	http://localhost:8090/test?srvID=testId&hello=world
 
 <br>	
 ####동기방식으로 서비스 요청하기
@@ -567,7 +552,6 @@ JQuery 라이브러리를 이용하여 서비스를 요청합니다.
 	//예제
 	JGService.ajax("test", {
 		data : {
-			srvMap : "test"
 			srvID : "testId"
 		}
 		,success : function(result_){

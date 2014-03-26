@@ -1,37 +1,79 @@
 package com.jg.main;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.io.File;
 import java.util.HashMap;
-import java.util.ResourceBundle;
+import java.util.Iterator;
+import java.util.List;
+
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
 
 import com.jg.db.JGDBConfig;
+import com.jg.log.JGLog;
 import com.jg.util.JGStringUtils;
 
 public class JGMainConfig{
+	
+	static protected final String ELEMENT_COMMON = "common";
+	static protected final String ELEMENT_DATABASE = "database";
+	static protected final String ELEMENT_CUSTOM = "custom";
+	static protected final String ELEMENT_OPTION = "option";
+	
+	static protected final String ATTR_NAME = "name";
+	static protected final String ATTR_ISPRIMARY = "isPrimary";
+	
+	static protected final String ELEMENT_KEY_DEBUG_LEVEL = "debug-level";
+	static protected final String ELEMENT_KEY_CHARACTER_ENCODING = "character-encoding";
+	static protected final String ELEMENT_KEY_DIRPATH_SERVICE = "dirpath-service";
+	static protected final String ELEMENT_KEY_DIRPATH_QUERY = "dirpath-query";
+	static protected final String ELEMENT_KEY_FILE_ROOT_PATH = "file-root-path";
+	static protected final String ELEMENT_KEY_FILE_REJECT_REGEXP = "file-reject-regexp";
+	static protected final String ELEMENT_KEY_FILE_IMAGE_COMPRESSION = "file-image-compression";
+	static protected final String ELEMENT_KEY_DB_JDBC_CLASS = "jdbc-class";
+	static protected final String ELEMENT_KEY_DB_URL = "url";
+	static protected final String ELEMENT_KEY_DB_USER_NAME = "user-name";
+	static protected final String ELEMENT_KEY_DB_PASSWORD = "password";
+	
 	static private JGMainConfig _config = null;
 	static public final JGMainConfig sharedConfig(){
 		if(!isInitialized()){
-			synchronized(JGMainConfig.class){
-				try{
-					_config = new JGMainConfig();
-				}catch(Exception ex_){
-					ex_.printStackTrace();
-				}
-			}
+			JGLog.error("JGMainConfig is not initialized", new NullPointerException());
+			return null;
 		}
 		return _config;
 	}
+	static public final JGMainConfig makeSharedConfig(String configPath_) throws Exception{
+		if(!isInitialized()){
+			synchronized(JGMainConfig.class){
+				try{
+					_config = new JGMainConfig(configPath_);
+				}catch(Exception ex_){
+					throw new Exception("failed initialize JGMainConfig", ex_);
+				}
+				
+				return _config;
+			}
+		}else throw new Exception("JGMainConfig already initialized");
+	}
+	
 	static public final boolean isInitialized(){
 		return (_config != null);
 	}
 	
-	private ResourceBundle _configBundle = null;
-	public ResourceBundle getConfigBundle(){
-		if(_configBundle == null){
-			_configBundle = ResourceBundle.getBundle("JGConfig");
+	private Element _configElement = null;
+	protected Element getConfigElement(String configPath_){
+		if(_configElement == null){
+			synchronized(JGMainConfig.class){
+				try{
+					
+					_configElement = new SAXBuilder().build(new File(configPath_+"/JGConfig.xml")).getRootElement();
+				}catch(Exception ex_){
+					JGLog.error("failed to load JGConfig.xml", ex_);
+					_configElement = null;
+				}
+			}
 		}
-		return _configBundle;
+		return _configElement;
 	}
 	
 	protected int _debugLevel = 0;
@@ -50,56 +92,62 @@ public class JGMainConfig{
 		return _characterEncoding;
 	}
 	
-	protected boolean _serviceEncryption = false;
-	protected void setServiceEncryption(boolean bool_){
-		_serviceEncryption = bool_;
+	protected String _servicePath = null;
+	protected void setServicePath(String path_){
+		_servicePath = path_;
 	}
-	public boolean isServiceEncryption(){
-		return _serviceEncryption;
-	}
-	
-	protected String _serviceDirectoryPath = null;
-	protected void setServiceDirectoryPath(String path_){
-		_serviceDirectoryPath = path_;
-	}
-	public String getServiceDirectoryPath(){
-		return _serviceDirectoryPath;
+	public String getServicePath(){
+		return _servicePath;
 	}
 	
-	protected String _DBXMLQueryDirectoryPath = null;
-	protected void setDBXMLQueryDirectoryPath(String path_){
-		_DBXMLQueryDirectoryPath = path_;
+	protected String _queryPath = null;
+	protected void setQueryPath(String path_){
+		_queryPath = path_;
 	}
-	public String getDBXMLQueryDirectoryPath(){
-		return _DBXMLQueryDirectoryPath;
-	}
-	
-	protected String _fileUploadRootPath = null;
-	protected void setFileUploadRootPath(String path_){
-		_fileUploadRootPath = path_;
-	}
-	public String getFileUploadRootPath(){
-		return _fileUploadRootPath;
-	}
-	protected String _fileUploadRejectRegexp = null;
-	protected void setFileUploadRejectRegexp(String regexp_){
-		_fileUploadRejectRegexp = regexp_;
-	}
-	public String getFileUploadRejectRegexp(){
-		return _fileUploadRejectRegexp;
-	}
-	protected boolean _compressionUploadImage = false;
-	protected void setCompressionUploadImage(boolean bool_){
-		_compressionUploadImage = bool_;
-	}
-	public boolean isCompressionUploadImage(){
-		return _compressionUploadImage;
+	public String getQueryPath(){
+		return _queryPath;
 	}
 	
-	protected JGDBConfigMap _dBConfigMap = new JGDBConfigMap();
-	public JGDBConfigMap getDBConfigMap(){
+	protected String _fileRootPath = null;
+	protected void setFileRootPath(String path_){
+		_fileRootPath = path_;
+	}
+	public String getFileRootPath(){
+		return _fileRootPath;
+	}
+	protected String _fileRejectRegexp = null;
+	protected void setFileRejectRegexp(String regexp_){
+		_fileRejectRegexp = regexp_;
+	}
+	public String getFileRejectRegexp(){
+		return _fileRejectRegexp;
+	}
+	protected boolean _fileImageCompression = false;
+	protected void setFileImageCompression(boolean bool_){
+		_fileImageCompression = bool_;
+	}
+	public boolean isCompressionImage(){
+		return _fileImageCompression;
+	}
+	
+	
+	protected HashMap<String, JGDBConfig> _dBConfigMap = new HashMap<String, JGDBConfig>();
+	public HashMap<String, JGDBConfig> getDBConfigMap(){
 		return _dBConfigMap;
 	}
+	protected String _primaryDBName = null;
+	protected void setPrimaryDBName(String name_){
+		_primaryDBName = name_;
+	}
+	public String getPrimaryDBName(){
+		return _primaryDBName;
+	}
+	public JGDBConfig getDBConfig(String name_){
+		return _dBConfigMap.get(name_);
+	}
+	public JGDBConfig getDBConfig(){
+		return getDBConfig(_primaryDBName);
+	} 
 	
 	protected HashMap<String, String> _customData = new HashMap<String, String>();
 	public int sizeOfCustomData(){
@@ -112,76 +160,60 @@ public class JGMainConfig{
 		return _customData.get(key_);
 	}
 	
-	public JGMainConfig() throws Exception{
-		getConfigBundle();
+	protected String _configPath = null;
+	public final String getConfigPath(){
+		return _configPath;
+	}
+	
+	public JGMainConfig(String configPath_) throws Exception{
+		_configPath = configPath_;
+		getConfigElement(configPath_);
+		reload();
+	}
+	
+	public void reload() throws Exception{
+		Element commonElement_ = _configElement.getChild(ELEMENT_COMMON);
+		List<?> dbList_ = _configElement.getChildren(ELEMENT_DATABASE);
+		List<?> customList_ = _configElement.getChild(ELEMENT_CUSTOM).getChildren(ELEMENT_OPTION);
 		
-		//load common config
-		String configNamePrefix_ = "jg.common.%s";
-
 		try{
-			setDebugLevel(Integer.valueOf(_configBundle.getString(String.format(configNamePrefix_, "debugLevel"))).intValue());
+			setDebugLevel(Integer.valueOf(commonElement_.getChild(ELEMENT_KEY_DEBUG_LEVEL).getValue()).intValue());
 		}catch(Exception ex_){
 			setDebugLevel(9);
 		}
 		
-		_characterEncoding = _configBundle.getString(String.format(configNamePrefix_, "characterEncoding"));
+		_characterEncoding = commonElement_.getChild(ELEMENT_KEY_CHARACTER_ENCODING).getValue();
+		_servicePath = _configPath+"/"+commonElement_.getChild(ELEMENT_KEY_DIRPATH_SERVICE).getValue();
+		_queryPath = _configPath+"/"+commonElement_.getChild(ELEMENT_KEY_DIRPATH_QUERY).getValue();
+		_fileRootPath = commonElement_.getChild(ELEMENT_KEY_FILE_ROOT_PATH).getValue();
+		_fileRejectRegexp = commonElement_.getChild(ELEMENT_KEY_FILE_REJECT_REGEXP).getValue();
+		_fileImageCompression = JGStringUtils.getBoolean(commonElement_.getChild(ELEMENT_KEY_FILE_IMAGE_COMPRESSION).getValue(), true);
 		
-		String rootPath_ = getClass().getResource("/").getPath();
-		_serviceDirectoryPath = rootPath_+_configBundle.getString(String.format(configNamePrefix_, "serviceDirectoryPath"));
-		_DBXMLQueryDirectoryPath = rootPath_+_configBundle.getString(String.format(configNamePrefix_, "DBXMLQueryDirectoryPath"));
-		_fileUploadRootPath = _configBundle.getString(String.format(configNamePrefix_, "fileUploadRootPath"));
-		_fileUploadRejectRegexp = _configBundle.getString(String.format(configNamePrefix_, "fileUploadRejectRegexp"));
-		_compressionUploadImage = JGStringUtils.getBoolean(_configBundle.getString(String.format(configNamePrefix_, "compressionUploadImage")));
-		
-		//load Database connection configuration
-		//get db config list
-		configNamePrefix_ = "jg.db.config.%03d";
-		for(int index_=0;index_<50;++index_){
-				String targetName_ = String.format(configNamePrefix_, index_);
-				
-				String jdbcKeyName_ = targetName_+".JDBCClassName";
-				if(!_configBundle.containsKey(jdbcKeyName_)){
-					break;
-				}
-				
-				try{
-					String JDBCClassName_ = _configBundle.getString(jdbcKeyName_);
-					String url_ = _configBundle.getString(targetName_+".url");
-					String userName_ = _configBundle.getString(targetName_+".userName");
-					String password_ = _configBundle.getString(targetName_+".password");
-					String characterEncoding_ = _configBundle.getString(targetName_+".characterEncoding");
-					
-					_dBConfigMap.addDBConfig(new JGDBConfig(JDBCClassName_,url_,userName_,password_,characterEncoding_));
-				}catch(Exception ex_){
-					throw new Exception("not enough JGDBConfig parameters",ex_);
-				}
-				
-		}
-		
-		configNamePrefix_ = "jg.custom.";
-		Enumeration<String> allKeys_ = _configBundle.getKeys();
-		while(allKeys_.hasMoreElements()){
-			String KeyName_ = allKeys_.nextElement();
-			if(KeyName_.indexOf(configNamePrefix_) >= 0){
-				putCustomData(KeyName_, _configBundle.getString(KeyName_));
+		Iterator<?> dbIterator_ = dbList_.iterator();
+		while(dbIterator_.hasNext()){
+			Element dbConfigElement_ = (Element)dbIterator_.next();
+			
+			String dbName_ = dbConfigElement_.getAttributeValue(ATTR_NAME);
+			boolean isPrimary_ = JGStringUtils.getBoolean(dbConfigElement_.getAttributeValue(ATTR_ISPRIMARY), false);
+			
+			String jdbcClassName_ = dbConfigElement_.getChild(ELEMENT_KEY_DB_JDBC_CLASS).getValue();
+			String url_ = dbConfigElement_.getChild(ELEMENT_KEY_DB_URL).getValue();
+			String userName_ = dbConfigElement_.getChild(ELEMENT_KEY_DB_USER_NAME).getValue();
+			String password_ = dbConfigElement_.getChild(ELEMENT_KEY_DB_PASSWORD).getValue();
+			String characterEncoding_ = dbConfigElement_.getChild(ELEMENT_KEY_CHARACTER_ENCODING).getValue();
+			
+			_dBConfigMap.put(dbName_, new JGDBConfig(jdbcClassName_, url_, userName_, password_, characterEncoding_));
+			if(isPrimary_ || _primaryDBName == null){
+				_primaryDBName = dbName_;
 			}
 		}
-	}
-	
-	public class JGDBConfigMap{
-		private ArrayList<JGDBConfig> _DBConfigList = new ArrayList<JGDBConfig>();
-		protected void addDBConfig(JGDBConfig config_){
-			_DBConfigList.add(config_);
-		}
-		public JGDBConfig getDBConfig(int index_){
-			return _DBConfigList.get(index_);
-		}
 		
-		protected String _XMLQueryFilePath = null;
-		public String getXMLQueryFilePath(){
-			return _XMLQueryFilePath;
+		Iterator<?> customIterator_ = customList_.iterator();
+		while(customIterator_.hasNext()){
+			Element customElement_ = (Element)customIterator_.next();
+			String name_ = customElement_.getAttributeValue(ATTR_NAME);
+			String value_ = customElement_.getValue();
+			putCustomData(name_, value_);
 		}
-		
-		protected JGDBConfigMap(){}
 	}
 }

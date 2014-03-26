@@ -5,8 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.jg.action.JGActionKeyword;
-import com.jg.util.JGServletUtils;
 import com.jg.vo.JGDataset;
 
 public class JGServiceBox{
@@ -42,17 +40,6 @@ public class JGServiceBox{
 		_request = request_;
 		_response = response_;
 		_writer = new JGResponseWriter(response_);
-		_requestServiceKey = serviceKey_;
-	}
-	public JGServiceBox(HttpServletRequest request_, HttpServletResponse response_) throws Exception{
-		this(request_,response_,null);
-		JGServiceKey serviceKey_ = null;
-		if(JGMultipartData.isMultipart(this)){
-			JGMultipartData multipartData_ = multipartData();
-			serviceKey_ = new JGServiceKey(multipartData_.getFormFieldValue(JGActionKeyword.STR_SERVICEMAP), multipartData_.getFormFieldValue(JGActionKeyword.STR_SERVICEID));
-		}else{
-			serviceKey_ = new JGServiceKey(request_.getParameter(JGActionKeyword.STR_SERVICEMAP), request_.getParameter(JGActionKeyword.STR_SERVICEID));
-		}
 		_requestServiceKey = serviceKey_;
 	}
 	
@@ -107,14 +94,8 @@ public class JGServiceBox{
 	public void forward(String url_) throws Exception{
 		_request.getRequestDispatcher(url_).forward(_request, _response);
 	}
-	public void forward(JGServiceKey serviceKey_) throws Exception{
-		forward(JGServletUtils.getServiceUrl(_request)+"?"+serviceKey_.makeServiceKeyParameters());
-	}
 	
 	public void redirect(String url_) throws Exception{
 		_response.sendRedirect(url_);
-	}
-	public void redirect(JGServiceKey serviceKey_) throws Exception{
-		redirect(JGServletUtils.getServiceUrl(_request)+"?"+serviceKey_.makeServiceKeyParameters());
 	}
 }

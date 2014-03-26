@@ -96,17 +96,6 @@
 			window.location.href = this.requestURL(urlKey_,parameters_);
 		}
 		/**
-		 * JGServlet의 키 형식으로 매개변수와 함께 JSON객체를 생성합니다.
-		 *
-		 *@method serviceKey
-		 *@param {String} srvMap_ 서비스맵
-		 *@param {String} srvID_ 서비스ID
-		 *@param {Object} [parameters_] JSON형식의 매개변수
-		**/
-		,serviceKey : function(srvMap_, srvID_, parameters_){
-			return $.extend({srvMap : srvMap_, srvID : srvID_}, parameters_);
-		}
-		/**
 		 * 파일선택창을 호출합니다. 파일 선택 시, 콜백함수를 통해서 input요소를 반환합니다.
 		 * 
 		 * 	//옵션항목	

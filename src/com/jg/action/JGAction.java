@@ -13,12 +13,9 @@ import com.jg.main.JGMainConfig;
 import com.jg.util.JGReflectionUtils;
 
 public abstract class JGAction{
-	
 	private ArrayList<JGDBConnection> _DBConnectionList  = new ArrayList<JGDBConnection>();
 	
-	protected JGDBConnection getDBConnection(int index_) throws Exception{
-		JGDBConfig dbConfig_ = JGMainConfig.sharedConfig().getDBConfigMap().getDBConfig(index_);
-		
+	protected JGDBConnection getDBConnection(JGDBConfig dbConfig_) throws Exception{
 		int connectionCount_ = _DBConnectionList.size();
 		for(int tIndex_=0;tIndex_<connectionCount_;++tIndex_){
 			JGDBConnection connection_ = _DBConnectionList.get(tIndex_);
@@ -31,8 +28,11 @@ public abstract class JGAction{
 		_DBConnectionList.add(connection_);
 		return connection_;
 	}
+	protected JGDBConnection getDBConnection(String dbName_) throws Exception{
+		return getDBConnection(JGMainConfig.sharedConfig().getDBConfig(dbName_));
+	}
 	protected JGDBConnection getDBConnection() throws Exception{
-		return getDBConnection(0);
+		return getDBConnection(JGMainConfig.sharedConfig().getPrimaryDBName());
 	}
 	protected void clearDBConnection(){
 		_DBConnectionList.clear();
@@ -71,7 +71,6 @@ public abstract class JGAction{
 		}
 	}
 	
-	protected void initAction(JGServiceBox firstServiceBox_){/*override me*/}
 	protected void cleanup(){/*override me*/}
 	protected void didCaughtException(JGActionException actionError_) throws Exception{
 		throw actionError_;

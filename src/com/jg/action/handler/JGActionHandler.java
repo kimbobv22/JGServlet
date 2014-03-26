@@ -16,12 +16,11 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
 import com.jg.action.JGAction;
-import com.jg.action.JGActionKeyword;
 import com.jg.action.handler.JGService.JGResultDef;
 import com.jg.action.handler.JGServiceMap.JGActionClassDef;
 import com.jg.action.handler.JGServiceMap.JGResultPageDef;
 import com.jg.log.JGLog;
-import com.jg.main.JGMainConfig;
+import com.jg.main.JGKeyword;
 import com.jg.util.JGFileUtils;
 import com.jg.util.JGReflectionUtils;
 import com.jg.util.JGStringUtils;
@@ -38,9 +37,12 @@ public class JGActionHandler{
 		return _sharedHandler;
 	}
 	
-	private String _targetPath = null;
-	public String getTargetPath(){
-		return _targetPath;
+	static protected String _XMLDirectoryPath = null;
+	static public void setXMLDirectoryPath(String path_){
+		_XMLDirectoryPath = path_;
+	}
+	static public String getXMLDirectoryPath(){
+		return _XMLDirectoryPath;
 	}
 	
 	HashMap<String, JGServiceMap> _serviceMaps = new HashMap<String, JGServiceMap>();
@@ -83,13 +85,12 @@ public class JGActionHandler{
 	}
 	
 	public JGActionHandler() throws Exception{
-		_targetPath = JGMainConfig.sharedConfig().getServiceDirectoryPath();
 		reload();
 	}
 	
 	public void reload() throws Exception{
 		_serviceMaps.clear();
-		_searchXMLDirectory(_targetPath);
+		_searchXMLDirectory(_XMLDirectoryPath);
 	}
 	
 	private void _searchXMLDirectory(String filePath_) throws Exception{
@@ -101,7 +102,7 @@ public class JGActionHandler{
 				File targetFile_ = fileList_[index_];
 				String childPath_ = targetFile_.getCanonicalPath();
 				if(targetFile_.isFile() && targetFile_.getName().endsWith(".xml")){
-					_addServiceMapFromXML(JGFileUtils.getFileName(childPath_, true), childPath_);
+					_addServiceMapFromXML(JGFileUtils.removeSuffix(JGFileUtils.convertToRelativePath(_XMLDirectoryPath, childPath_)), childPath_);
 				}else if(targetFile_.isDirectory()){
 					_searchXMLDirectory(childPath_);
 				}
@@ -119,18 +120,18 @@ public class JGActionHandler{
 			Document rootDocument_ = new SAXBuilder().build(new File(childPath_));
 			Element serviceMapElement_ = rootDocument_.getRootElement();
 			
-			JGServiceMap serviceMap_ = new JGServiceMap(JGStringUtils.getBoolean(serviceMapElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_ISPRIMARY), false));
+			JGServiceMap serviceMap_ = new JGServiceMap(JGStringUtils.getBoolean(serviceMapElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_ISPRIMARY), false));
 			
 			//action classes
-			Element actionClassesElement_ = serviceMapElement_.getChild(JGActionKeyword.STR_ELEMENT_ACTIONCLASSES);
+			Element actionClassesElement_ = serviceMapElement_.getChild(JGKeyword.STR_ELEMENT_ACTIONCLASSES);
 			if(actionClassesElement_ != null){
-				List<?> actionClassList_ = actionClassesElement_.getChildren(JGActionKeyword.STR_ELEMENT_CLASS);
+				List<?> actionClassList_ = actionClassesElement_.getChildren(JGKeyword.STR_ELEMENT_CLASS);
 				int actionClassCount_ = actionClassList_.size();
 				for(int index_=0;index_<actionClassCount_;++index_){
 					Element actionClassElement_ = (Element)actionClassList_.get(index_);
 					
 					serviceMap_.addActionClassDef(
-							actionClassElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_NAME)
+							actionClassElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_NAME)
 							,actionClassElement_.getValue()
 						);
 				}
@@ -139,15 +140,15 @@ public class JGActionHandler{
 			JGLog.log(9," - Loaded action classes, total : "+serviceMap_.sizeOfActionClassDefs());
 			
 			//result pages
-			Element resultPagesElement_ = serviceMapElement_.getChild(JGActionKeyword.STR_ELEMENT_RESULTPAGES);
+			Element resultPagesElement_ = serviceMapElement_.getChild(JGKeyword.STR_ELEMENT_RESULTPAGES);
 			if(resultPagesElement_ != null){
-				List<?> resultPageList_ = resultPagesElement_.getChildren(JGActionKeyword.STR_ELEMENT_PAGE);
+				List<?> resultPageList_ = resultPagesElement_.getChildren(JGKeyword.STR_ELEMENT_PAGE);
 				int resultPageCount_ = resultPageList_.size();
 				for(int index_=0;index_<resultPageCount_;++index_){
 					Element resultPageElement_ = (Element)resultPageList_.get(index_);
 					
 					serviceMap_.addResultPageDef(
-							resultPageElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_NAME)
+							resultPageElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_NAME)
 							,resultPageElement_.getValue()
 						);
 				}
@@ -156,16 +157,16 @@ public class JGActionHandler{
 			JGLog.log(9," - Loaded result pages, total : "+serviceMap_.sizeOfResultPageDefs());
 			
 			//filters
-			Element filtersElement_ = serviceMapElement_.getChild(JGActionKeyword.STR_ELEMENT_FILTERS);
+			Element filtersElement_ = serviceMapElement_.getChild(JGKeyword.STR_ELEMENT_FILTERS);
 			if(filtersElement_ != null){
-				List<?> filters_ = filtersElement_.getChildren(JGActionKeyword.STR_ELEMENT_FILTER);
+				List<?> filters_ = filtersElement_.getChildren(JGKeyword.STR_ELEMENT_FILTER);
 				if(filters_ != null){
 					int filterCount_ = filters_.size();
 					for(int index_=0;index_<filterCount_;++index_){
 						Element filterElement_ = (Element)filters_.get(index_);
 						
-						String fullKey_ = filterElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_SERVICEID);
-						boolean isLocalFilter_ = JGStringUtils.getBoolean(filterElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_LOCALFILTER), true);
+						String fullKey_ = filterElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_SERVICEID);
+						boolean isLocalFilter_ = JGStringUtils.getBoolean(filterElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_LOCALFILTER), true);
 						
 						JGServiceKey serviceKey_ = null;
 						if(JGServiceKey.isFullKey(fullKey_)){
@@ -182,45 +183,45 @@ public class JGActionHandler{
 			JGLog.log(9," - Loaded filters, total : "+sizeOfFilters());
 			
 			//services
-			List<?> serviceList_ = serviceMapElement_.getChildren(JGActionKeyword.STR_ELEMENT_SERVICE);
+			List<?> serviceList_ = serviceMapElement_.getChildren(JGKeyword.STR_ELEMENT_SERVICE);
 			if(serviceMapElement_ != null){
 				int serviceCount_ = serviceList_.size();
 				for(int index_=0;index_<serviceCount_;++index_){
 					Element serviceElement_ = (Element)serviceList_.get(index_);
 					
-					boolean isPrivate_ = JGStringUtils.getBoolean(serviceElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_ISPRIVATE), false);
-					boolean isPrimary_ = JGStringUtils.getBoolean(serviceElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_ISPRIMARY), false);
+					boolean isPrivate_ = JGStringUtils.getBoolean(serviceElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_ISPRIVATE), false);
+					boolean isPrimary_ = JGStringUtils.getBoolean(serviceElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_ISPRIMARY), false);
 					
 					JGService service_ = new JGService(
-							new JGServiceKey(mapName_, serviceElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_SERVICEID))
-							,serviceElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_ACTIONCLASSNAME)
-							,serviceElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_MAPPINGMETHOD)
-							,serviceElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_FSERVICEID)
+							new JGServiceKey(mapName_, serviceElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_SERVICEID))
+							,serviceElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_ACTIONCLASSNAME)
+							,serviceElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_MAPPINGMETHOD)
+							,serviceElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_FSERVICEID)
 							,isPrivate_, isPrimary_
 						);
 					
 					//add result to service
-					List<?> resultList_ = serviceElement_.getChildren(JGActionKeyword.STR_ELEMENT_RESULT);
+					List<?> resultList_ = serviceElement_.getChildren(JGKeyword.STR_ELEMENT_RESULT);
 					int resultCount_ = resultList_.size();
 					for(int rIndex_=0;rIndex_<resultCount_;++rIndex_){
 						Element resultElement_ = (Element)resultList_.get(rIndex_);
 						
 						int code_ = 0;
 						try{
-							code_ = Integer.valueOf(resultElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_CODE)).intValue(); 
+							code_ = Integer.valueOf(resultElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_CODE)).intValue(); 
 						}catch(Exception ex_){}
 						String pageValue_ = resultElement_.getValue();
 						
 						boolean isRedirect_ = false;
 						try{
-							isRedirect_ = Boolean.valueOf(resultElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_ISREDIRECT)).booleanValue();
+							isRedirect_ = Boolean.valueOf(resultElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_ISREDIRECT)).booleanValue();
 						}catch(Exception ex_){}
 						
 						service_.addResultDef(
 								code_
-								,resultElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_PAGENAME)
+								,resultElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_PAGENAME)
 								,pageValue_
-								,resultElement_.getAttributeValue(JGActionKeyword.STR_ATTRIBUTE_SERVICEID)
+								,resultElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_SERVICEID)
 								,isRedirect_
 							);
 					}
@@ -279,7 +280,7 @@ public class JGActionHandler{
 	
 	protected String convertStringByMappingRegex(String targetString_, JGServiceBox serviceBox_) throws Exception{
 		//convert mapping paramters
-		Pattern paramterPattern_ = Pattern.compile(JGActionKeyword.STR_REGEX_MAPPING_PARAMETER);
+		Pattern paramterPattern_ = Pattern.compile(JGKeyword.STR_REGEX_MAPPING_PARAMETER);
 		Matcher paramterPatternMatcher_ = paramterPattern_.matcher(targetString_);
 		
 		while(paramterPatternMatcher_.find()){
@@ -293,7 +294,7 @@ public class JGActionHandler{
 		}
 		
 		//convert mapping attributes
-		Pattern attributePattern_ = Pattern.compile(JGActionKeyword.STR_REGEX_MAPPING_ATTRIBUTE);
+		Pattern attributePattern_ = Pattern.compile(JGKeyword.STR_REGEX_MAPPING_ATTRIBUTE);
 		Matcher attributePatternMatcher_ = attributePattern_.matcher(targetString_);
 		
 		while(attributePatternMatcher_.find()){
@@ -417,8 +418,6 @@ public class JGActionHandler{
 	}
 	private Object _processAction(JGServiceBox serviceBox_, JGService service_) throws Exception{
 		JGAction action_ = makeAction(service_);
-		JGReflectionUtils.invokeMethod(action_, "initAction", serviceBox_);
-		
 		return JGReflectionUtils.invokeMethod(action_, action_.getClass().getSuperclass()
 				, "process", new Object[]{service_, serviceBox_});
 	}

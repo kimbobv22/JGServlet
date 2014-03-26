@@ -1,8 +1,7 @@
-package com.jg.action;
+package com.jg.main;
 
-public class JGActionKeyword{
+public class JGKeyword{
 	
-	static public final String STR_SERVICEMAP = "srvMap";
 	static public final String STR_SERVICEID = "srvID";
 	static public final String STR_SERVICEID_SPLITTER = ".";
 	static public final String STR_SERVICEID_SPLITTER_REGX = "\\"+STR_SERVICEID_SPLITTER; 
@@ -19,7 +18,6 @@ public class JGActionKeyword{
 	
 	static public final String STR_ATTRIBUTE_ISPRIMARY = "isPrimary";
 	static public final String STR_ATTRIBUTE_NAME = "name";
-	//static public final String STR_ATTRIBUTE_MAPPINGCLASS = "mappingClass";
 	static public final String STR_ATTRIBUTE_SERVICEID = "serviceID";
 	static public final String STR_ATTRIBUTE_FSERVICEID = "forwardServiceID";
 	static public final String STR_ATTRIBUTE_ACTIONCLASSNAME = "actionClassName";

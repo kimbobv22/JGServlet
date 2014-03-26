@@ -1,7 +1,7 @@
 {
 	"name": "JGService for JGServlet"
 	,"description": "JGServlet 연동을 위한 JavaScript 라이브러리입니다."
-	,"version": "1.1.0"
+	,"version": "2.0.0"
 	,"url": "https://github.com/kimbobv22/JGServlet"
 	,"logo" : "../../logo-small.png"
 	,"options": {

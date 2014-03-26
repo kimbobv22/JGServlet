@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class JGServletUtils{
 	
-	static public String getServiceUrl(HttpServletRequest request_) throws Exception{
+	static public String getServerURL(HttpServletRequest request_) throws Exception{
 		String serviceUrl_ = "http://"+request_.getServerName();
 		String servicePort_ = String.valueOf(request_.getServerPort());
 		String serviceUri_ = request_.getRequestURI();

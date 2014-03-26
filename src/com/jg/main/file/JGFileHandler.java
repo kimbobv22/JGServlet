@@ -55,7 +55,7 @@ public class JGFileHandler{
 		sendFile(box_, file_, MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(file_));
 	}
 	static public void sendFile(JGServiceBox box_, String filePath_, String mimeType_) throws Exception{
-		File targetFile_ = new File(JGMainConfig.sharedConfig().getFileUploadRootPath()+filePath_);
+		File targetFile_ = new File(JGMainConfig.sharedConfig().getFileRootPath()+filePath_);
 		if(!targetFile_.exists()){
 			throw new FileNotFoundException("file not found : "+filePath_);
 		}
@@ -105,7 +105,7 @@ public class JGFileHandler{
 	}
 	
 	static public void sendResizedImage(JGServiceBox box_, String imageFilePath_,  int width_, int height_, HashMap<RenderingHints.Key, Object> renderingHints_) throws Exception{
-		File targetFile_ = new File(JGMainConfig.sharedConfig().getFileUploadRootPath()+imageFilePath_);
+		File targetFile_ = new File(JGMainConfig.sharedConfig().getFileRootPath()+imageFilePath_);
 		if(!targetFile_.exists()){
 			throw new FileNotFoundException("file not found : "+imageFilePath_);
 		}
@@ -116,7 +116,7 @@ public class JGFileHandler{
 	}
 	
 	static public void sendResizedImage(JGServiceBox box_, String imageFilePath_, double ratio_, HashMap<RenderingHints.Key, Object> renderingHints_) throws Exception{
-		File targetFile_ = new File(JGMainConfig.sharedConfig().getFileUploadRootPath()+imageFilePath_);
+		File targetFile_ = new File(JGMainConfig.sharedConfig().getFileRootPath()+imageFilePath_);
 		if(!targetFile_.exists()){
 			throw new FileNotFoundException("file not found : "+imageFilePath_);
 		}
@@ -127,7 +127,7 @@ public class JGFileHandler{
 	}
 	
 	static public void deleteFile(String filePath_) throws Exception{
-		File targetFile_ = new File(JGMainConfig.sharedConfig().getFileUploadRootPath()+filePath_);
+		File targetFile_ = new File(JGMainConfig.sharedConfig().getFileRootPath()+filePath_);
 		if(!targetFile_.exists()){
 			throw new FileNotFoundException("file not found : "+filePath_);
 		}

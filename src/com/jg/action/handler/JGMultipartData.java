@@ -48,7 +48,7 @@ public class JGMultipartData{
 	public ArrayList<JGMultipartUploadResult> doWriteUploadData(JGMultipartUploadHandlerDef handler_) throws Exception{
 		ArrayList<JGMultipartUploadResult> result_ = new ArrayList<JGMultipartUploadResult>();
 		
-		String fileUploadRootPath_ = JGMainConfig.sharedConfig().getFileUploadRootPath();
+		String fileUploadRootPath_ = JGMainConfig.sharedConfig().getFileRootPath();
 		String targetFilePath_ = (String)JGCommonUtils.NVL(getFormFieldValue("path"), "");
 		for(FileItem fileItem_ : _uploadDataList){
 			JGMultipartUploadResult uploadResult_ = new JGMultipartUploadResult();
@@ -61,14 +61,14 @@ public class JGMultipartData{
 				uploadResult_._didUpload = false;
 			}else{
 				//check file name by reject pattern
-				Pattern rejectPattern_ = Pattern.compile(JGMainConfig.sharedConfig().getFileUploadRejectRegexp());
+				Pattern rejectPattern_ = Pattern.compile(JGMainConfig.sharedConfig().getFileRejectRegexp());
 				if(rejectPattern_.matcher(fileName_).find()){
 					throw new IllegalAccessException("invalid file name : "+fileName_);
 				}
 				
 				String newFileName_ = handler_.renameFileName(fileItem_);
 				
-				if(JGMainConfig.sharedConfig().isCompressionUploadImage() && getParentServiceBox().getSession().getServletContext().getMimeType(fileName_).indexOf("image/") >= 0){
+				if(JGMainConfig.sharedConfig().isCompressionImage() && getParentServiceBox().getSession().getServletContext().getMimeType(fileName_).indexOf("image/") >= 0){
 					BufferedImage orgImage_ = ImageIO.read(fileItem_.getInputStream());
 					BufferedImage compedImage_ = JGDrawingUtils.resizeImage(orgImage_, orgImage_.getWidth(), orgImage_.getHeight());
 					

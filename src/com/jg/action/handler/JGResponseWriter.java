@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 
 import com.jg.main.JGMainConfig;
-import com.jg.util.JGEncryptionUtil;
 
 public class JGResponseWriter {
 	private HttpServletResponse _response = null;
@@ -28,7 +27,7 @@ public class JGResponseWriter {
 		_stringBuffer.append(object_);
 	}
 	
-	public void print(String contentType_, String charset_, boolean doEncrypt_) throws Exception{
+	public void print(String contentType_, String charset_) throws Exception{
 		_response.setContentType(contentType_+"; charset="+charset_);
 		PrintWriter writer_ = null;
 		try{
@@ -37,20 +36,9 @@ public class JGResponseWriter {
 			new Exception("failed to load HttpWriter", ex_);
 		}
 		String printString_ = _stringBuffer.toString();
-		if(doEncrypt_){
-			try{
-				printString_ = JGEncryptionUtil.encrypt(printString_);
-			}catch(Exception ex_){
-				 throw new Exception("failed to encryption", ex_);
-			}
-		}
 		writer_.print(printString_);
 		writer_.close();
 		clear();
-	}
-	
-	public void print(String contentType_, String charset_) throws Exception{
-		print(contentType_, charset_, JGMainConfig.sharedConfig().isServiceEncryption());
 	}
 	public void print(String contentType_) throws Exception{
 		print(contentType_,JGMainConfig.sharedConfig().getCharacterEncoding());
@@ -59,10 +47,6 @@ public class JGResponseWriter {
 		print("text/html");
 	}
 	
-	public void appendAndPrint(Object object_, String contentType_, String charset_, boolean doEncrypt_) throws Exception{
-		append(object_);
-		print(contentType_, charset_, doEncrypt_);
-	}
 	public void appendAndPrint(Object object_, String contentType_, String charset_) throws Exception{
 		append(object_);
 		print(contentType_, charset_);
