@@ -153,8 +153,18 @@ web.xml에 구현한 Servlet을 매핑합니다.<br>
 		...
 	</servlet>
 	<servlet-mapping>
-		<servlet-name> myServlet </servlet-name>
-		<url-pattern>/{사용자패턴}/*</url-pattern>
+		<servlet-name>myServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+		...
+	</servlet-mapping>
+	
+	// 직접참조 자원은 반드시 예외 매핑을 해야 합니다.
+	// 모든 요청은 기본적으로 myServlet으로 유도되기 때문입니다.
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.js</url-pattern>
+		<url-pattern>*.css</url-pattern>
+		<url-pattern>*.html</url-pattern>
 		...
 	</servlet-mapping>
 	
@@ -196,7 +206,7 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 	</services>
 	
 	// 서비스 호출 시
-	http://URL주소/{사용자패턴}/main/test?srvID=service
+	http://URL주소/main/test?srvID=service
 
 ###서비스XML 작성방법
 <br>
