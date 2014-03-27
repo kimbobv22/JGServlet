@@ -146,8 +146,6 @@ web.xml에 구현한 Servlet을 매핑합니다.<br>
 
 ####web.xml
 	
-	sdfsdf	
-	
 	// servlet 설정
 	<servlet>
 		<servlet-name>myServlet</servlet-name>
@@ -156,7 +154,7 @@ web.xml에 구현한 Servlet을 매핑합니다.<br>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name> myServlet </servlet-name>
-		<url-pattern>/myPattern</url-pattern>
+		<url-pattern>/{사용자패턴}/*</url-pattern>
 		...
 	</servlet-mapping>
 	
@@ -198,7 +196,7 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 	</services>
 	
 	// 서비스 호출 시
-	http://URL주소/main/test?srvID=service
+	http://URL주소/{사용자패턴}/main/test?srvID=service
 
 ###서비스XML 작성방법
 <br>

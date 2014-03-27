@@ -39,12 +39,15 @@ public class JGServiceKey {
 	}
 	
 	static public JGServiceKey makeKey(HttpServletRequest request_){
-		String servletPath_ = request_.getServletPath().substring(1);
-		if(servletPath_.length() == 0){
-			servletPath_ = null;
+		String servletPath_ = request_.getContextPath()+request_.getServletPath();
+		String requestURI_ = request_.getRequestURI();
+		String serviceMap_ = requestURI_.substring(servletPath_.length()+1);
+		
+		if(serviceMap_.length() == 0){
+			serviceMap_ = null;
 		}
 		
-		return new JGServiceKey(servletPath_, request_.getParameter(JGKeyword.STR_SERVICEID));
+		return new JGServiceKey(serviceMap_, request_.getParameter(JGKeyword.STR_SERVICEID));
 	}
 	static public boolean isFullKey(String key_){
 		return !JGStringUtils.isBlank(key_) && key_.indexOf(JGKeyword.STR_SERVICEID_SPLITTER) >= 0;

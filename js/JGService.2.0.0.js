@@ -39,7 +39,7 @@
 			}
 			
 			var requestURL_ = this._requestURLs[urlKey_];
-			if(!Object.isNull(objects_)){
+			if(!isNull(objects_)){
 				requestURL_ += (requestURL_.indexOf("?") < 0 ? "?" : "&")+$.param(objects_);
 			}
 			return requestURL_;
@@ -163,7 +163,7 @@
 				uploadForm_.append(key_, parameters_[key_]);
 			}
 			
-			if(Object.isNull(inputFile_)){
+			if(isNull(inputFile_)){
 				var that_ = this;
 				
 				this.getFile(function(file_){
@@ -192,13 +192,13 @@
 				,async : true
 				,success : function(result_){
 					if(result_.result === 0){
-						if(!Object.isNull(options_.success)) options_.success(result_.message);
+						if(!isNull(options_.success)) options_.success(result_.message);
 					}else{
-						if(!Object.isNull(options_.fail)) options_.fail(result_.result,result_.message);
+						if(!isNull(options_.fail)) options_.fail(result_.result,result_.message);
 					}
 					
 				},error : function(response_, error_, thrown_){
-					if(!Object.isNull(options_.error)) options_.error(reponse_, error_, thrown_);
+					if(!isNull(options_.error)) options_.error(reponse_, error_, thrown_);
 				}
 			});
 		}
@@ -276,7 +276,7 @@
 		 * @return {Boolean} 검증여부
 		 */
 		,checkMobile : function(options_){
-			return this._mobileCheckMetaData[Object.NVL(platform_,"any").toLowerCase()];
+			return this._mobileCheckMetaData[NVL(platform_,"any").toLowerCase()];
 		}
 	};
 	
