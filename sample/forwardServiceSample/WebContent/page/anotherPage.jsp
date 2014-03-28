@@ -7,10 +7,8 @@
 </head>
 <body>
 	<h1>Welcome to JGServlet</h1>
-	<h3><%=request.getAttribute("message") %></h3>
 	<p>
-		Example for forwarding service<br>
-		<a href="main?srvID=another">go to another page</a>
+		this is another page
 	</p>
 </body>
 </html>

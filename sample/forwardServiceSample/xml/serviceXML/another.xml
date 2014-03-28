@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serviceList>
+	
+	<service serviceID="home">
+		<result code="0">/page/anotherPage.jsp</result>
+	</service>
+	
+</serviceList>

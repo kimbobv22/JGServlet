@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serviceList isPrimary="true">
+	<actionClasses>
+		<class name="basicAction">sample.BasicAction</class>
+	</actionClasses>
+	
+	<service serviceID="ajaxTest" actionClassName="basicAction" mappingMethod="testMethod" />
+	
+	<service serviceID="home" isPrimary="true">
+		<result code="0">/page/ajaxPage.jsp</result>
+	</service>
+</serviceList>

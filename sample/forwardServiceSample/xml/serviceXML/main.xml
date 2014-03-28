@@ -6,9 +6,12 @@
 	</actionClasses>
 
 	<service serviceID="forwardService" actionClassName="basicAction" mappingMethod="testMethod" isPrivate="true" />
-	
-	<service serviceID="another" forwardServiceID="forwardService" isPrimary="true">
+	<service serviceID="home" forwardServiceID="forwardService" isPrimary="true">
 		<result code="0">/page/forwardPage.jsp</result>
+	</service>
+	
+	<service serviceID="another">
+		<result code="0" serviceID="another.home" />
 	</service>
 	
 </serviceList>
