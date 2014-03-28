@@ -38,14 +38,18 @@ public class JGServiceKey {
 		return _mapName+JGKeyword.STR_SERVICEID_SPLITTER+_serviceID;
 	}
 	
-	static public JGServiceKey makeKey(HttpServletRequest request_){
+	static public JGServiceKey makeKey(JGServiceBox serviceBox_) throws Exception{
+		HttpServletRequest request_ = serviceBox_.getRequest();
 		String servletPath_ = request_.getServletPath().substring(1);
 		
 		if(servletPath_.length() == 0){
 			servletPath_ = null;
 		}
 		
-		return new JGServiceKey(servletPath_, request_.getParameter(JGKeyword.STR_SERVICEID));
+		if(JGMultipartData.isMultipart(request_)){
+			JGMultipartData multipartData_ = serviceBox_.multipartData();
+			return new JGServiceKey(servletPath_, multipartData_.getFormFieldValue(JGKeyword.STR_SERVICEID));
+		}else return new JGServiceKey(servletPath_, request_.getParameter(JGKeyword.STR_SERVICEID));
 	}
 	static public boolean isFullKey(String key_){
 		return !JGStringUtils.isBlank(key_) && key_.indexOf(JGKeyword.STR_SERVICEID_SPLITTER) >= 0;

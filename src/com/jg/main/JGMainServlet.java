@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.jg.action.handler.JGServiceBox;
-import com.jg.action.handler.JGServiceKey;
 import com.jg.filter.JGFilterChain;
 import com.jg.log.JGLog;
 import com.jg.main.loader.JGMainLoader;
@@ -68,7 +67,7 @@ public abstract class JGMainServlet extends HttpServlet{
 				throw new Exception("Shared JGMainLoader not loaded, bind JGMainServletContextListener to ServletContextListener"); 
 			}
 			
-			JGServiceBox serviceBox_ = new JGServiceBox(request_, response_, JGServiceKey.makeKey(request_));
+			JGServiceBox serviceBox_ = new JGServiceBox(request_, response_);
 			_filterChain.doFilter(serviceBox_);
 			
 			return serviceBox_;

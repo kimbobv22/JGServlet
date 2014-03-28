@@ -104,6 +104,7 @@
 			<file-root-path>/test/</file-root-path> //파일업로드기본경로
 			<file-reject-regexp>[\w\-\.]+[\.](php|jsp|asp)</file-reject-regexp> //파일거부표현식
 			<file-image-compression>true</file-image-compression> //이미지 압축여부
+			<file-image-compression-regexp>[\w\-\.]+[\.](jpg|jpeg|png)</file-image-compression-regexp> //이미지 압축대상 표현식
 		</common>
 		
 		/**

@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -66,9 +67,10 @@ public class JGMultipartData{
 					throw new IllegalAccessException("invalid file name : "+fileName_);
 				}
 				
-				String newFileName_ = handler_.renameFileName(fileItem_);
+				String newFileName_ = handler_.renameFile(fileItem_);
 				
-				if(JGMainConfig.sharedConfig().isCompressionImage() && getParentServiceBox().getSession().getServletContext().getMimeType(fileName_).indexOf("image/") >= 0){
+				if(JGMainConfig.sharedConfig().isCompressionImage()
+						&& Pattern.compile(JGMainConfig.sharedConfig().getFileImageCompressionRegexp()).matcher(fileName_).find()){
 					BufferedImage orgImage_ = ImageIO.read(fileItem_.getInputStream());
 					BufferedImage compedImage_ = JGDrawingUtils.resizeImage(orgImage_, orgImage_.getWidth(), orgImage_.getHeight());
 					
@@ -78,13 +80,14 @@ public class JGMultipartData{
 					ImageIO.write(compedImage_, "jpg", targetFile_);
 				}else{
 					newFileName_ += "."+JGFileUtils.getSuffix(fileName_);
+					new File(fileUploadRootPath_+targetFilePath_).mkdirs();
 					File targetFile_ = new File(fileUploadRootPath_+targetFilePath_, newFileName_);
-					targetFile_.mkdirs();
 					fileItem_.write(targetFile_);
 				}
 				
 				uploadResult_._uploadPath = targetFilePath_+newFileName_;
 				uploadResult_._didUpload = true;
+				handler_.fileUploaded(fileItem_, uploadResult_);
 			}
 			
 			result_.add(uploadResult_);
@@ -141,8 +144,11 @@ public class JGMultipartData{
 		}
 	}
 	
+	static public boolean isMultipart(HttpServletRequest request_){
+		return ServletFileUpload.isMultipartContent(request_);
+	}
 	static public boolean isMultipart(JGServiceBox serviceBox_){
-		return ServletFileUpload.isMultipartContent(serviceBox_.getRequest());
+		return isMultipart(serviceBox_.getRequest());
 	}
 	
 }

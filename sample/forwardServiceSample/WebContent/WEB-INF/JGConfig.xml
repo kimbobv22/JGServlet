@@ -8,6 +8,7 @@
 		<file-root-path>/test/</file-root-path>
 		<file-reject-regexp>[\w\-\.]+[\.](php|jsp|asp)</file-reject-regexp>
 		<file-image-compression>true</file-image-compression>
+		<file-image-compression-regexp>[\w\-\.]+[\.](jpg|jpeg|png)</file-image-compression-regexp>
 	</common>
 	
 	<database name="main" isPrimary="true">

@@ -42,6 +42,10 @@ public class JGServiceBox{
 		_writer = new JGResponseWriter(response_);
 		_requestServiceKey = serviceKey_;
 	}
+	public JGServiceBox(HttpServletRequest request_, HttpServletResponse response_) throws Exception{
+		this(request_,response_, null);
+		_requestServiceKey = JGServiceKey.makeKey(this);
+	}
 	
 	public HttpSession getSession(){
 		return _request.getSession();

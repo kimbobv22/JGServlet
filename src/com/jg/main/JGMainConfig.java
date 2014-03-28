@@ -29,6 +29,7 @@ public class JGMainConfig{
 	static protected final String ELEMENT_KEY_FILE_ROOT_PATH = "file-root-path";
 	static protected final String ELEMENT_KEY_FILE_REJECT_REGEXP = "file-reject-regexp";
 	static protected final String ELEMENT_KEY_FILE_IMAGE_COMPRESSION = "file-image-compression";
+	static protected final String ELEMENT_KEY_FILE_IMAGE_COMPRESSION_REGEXP = "file-image-compression-regexp";
 	static protected final String ELEMENT_KEY_DB_JDBC_CLASS = "jdbc-class";
 	static protected final String ELEMENT_KEY_DB_URL = "url";
 	static protected final String ELEMENT_KEY_DB_USER_NAME = "user-name";
@@ -130,6 +131,13 @@ public class JGMainConfig{
 		return _fileImageCompression;
 	}
 	
+	protected String _fileImageCompressionRegexp = "*";
+	protected void setFileImageCompressionRegexp(String pattern_){
+		_fileImageCompressionRegexp = pattern_;
+	}
+	public String getFileImageCompressionRegexp(){
+		return _fileImageCompressionRegexp;
+	}
 	
 	protected HashMap<String, JGDBConfig> _dBConfigMap = new HashMap<String, JGDBConfig>();
 	public HashMap<String, JGDBConfig> getDBConfigMap(){
@@ -188,6 +196,7 @@ public class JGMainConfig{
 		_fileRootPath = commonElement_.getChild(ELEMENT_KEY_FILE_ROOT_PATH).getValue();
 		_fileRejectRegexp = commonElement_.getChild(ELEMENT_KEY_FILE_REJECT_REGEXP).getValue();
 		_fileImageCompression = JGStringUtils.getBoolean(commonElement_.getChild(ELEMENT_KEY_FILE_IMAGE_COMPRESSION).getValue(), true);
+		_fileImageCompressionRegexp = commonElement_.getChild(ELEMENT_KEY_FILE_IMAGE_COMPRESSION_REGEXP).getValue();
 		
 		Iterator<?> dbIterator_ = dbList_.iterator();
 		while(dbIterator_.hasNext()){
