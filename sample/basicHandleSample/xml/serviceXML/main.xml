@@ -4,7 +4,7 @@
 	<actionClasses>
 		<class name="basicAction">sample.BasicAction</class>
 	</actionClasses>
-
+	
 	<service serviceID="welcome" isPrimary="true">
 		<result code="0">/page/helloWorld.jsp</result>
 	</service>

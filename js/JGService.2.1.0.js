@@ -8,6 +8,20 @@
 		return;
 	}
 	
+	function convertRequestURL(requestURL_, objects_){
+		if(!isNull(objects_)){
+			var copy_ = $.extend(true, objects_);
+			for(var paramName_ in copy_){
+				var regexp_ = new RegExp("\\{" + paramName_ + "\\}");
+				if(regexp_.test(requestURL_)){
+					requestURL_ = requestURL_.replace(regexp_,objects_[paramName_]);
+					delete objects_[paramName_];
+				}
+			}
+		}
+		return requestURL_;
+	}
+	
 	/**
 	 * JGServlet과 통신을 돕기 위한 라이브러리
 	 * 
@@ -37,18 +51,8 @@
 				this._requestURLs[urlKey_] = objects_;
 				return this._requestURLs[urlKey_];
 			}
-			
-			var requestURL_ = this._requestURLs[urlKey_];
+			var requestURL_ = convertRequestURL(this._requestURLs[urlKey_], objects_);
 			if(!isNull(objects_)){
-				var copy_ = $.extend(true, objects_);
-				for(var paramName_ in copy_){
-					var regexp_ = new RegExp("\\{" + paramName_ + "\\}");
-					if(regexp_.test(requestURL_)){
-						requestURL_ = requestURL_.replace(regexp_,objects_[paramName_]);
-						delete objects_[paramName_];
-					}
-				}
-				
 				requestURL_ += (requestURL_.indexOf("?") < 0 ? "?" : "&")+$.param(objects_);
 			}
 			return requestURL_;
@@ -62,11 +66,12 @@
 		 *@param {Object} [options_] jQuery AJAX 옵션
 		 **/
 		,ajax : function(urlKey_, options_){
+			var requestURL_ = convertRequestURL(this.requestURL(urlKey_), options_.data);
 			options_ = $.extend($.extend({
 				type : "POST"
 				,contentType: "application/x-www-form-urlencoded; charset=UTF-8"
 			},options_),{
-				url : this.requestURL(urlKey_)
+				url : requestURL_
 			});
 		
 			$.ajax(options_);
@@ -82,7 +87,7 @@
 			var tempForm_ = $("<form />");
 			tempForm_.hide();
 			tempForm_.attr("method","POST");
-			tempForm_.attr("action",this.requestURL(urlKey_));
+			tempForm_.attr("action",convertRequestURL(this.requestURL(urlKey_), parameters_));
 			
 			$.each(parameters_, function(name_, value_){
 				$("<input type='hidden' />")
@@ -164,10 +169,10 @@
 			},options_);
 			parameters_ = $.extend({},parameters_);
 			
+			var requestURL_ = convertRequestURL(this.requestURL(urlKey_), parameters_);
 			var uploadForm_ = new FormData();
 			uploadForm_.append("path", options_.path);
 			
-			//append paraemters from form fields
 			for(var key_ in parameters_){
 				uploadForm_.append(key_, parameters_[key_]);
 			}
@@ -193,23 +198,28 @@
 					});
 				}
 			}
-			this.ajax(urlKey_, {
-				data : uploadForm_
-				,cache: false
-				,contentType: false
-				,processData: false
-				,async : true
-				,success : function(result_){
-					if(result_.result === 0){
-						if(!isNull(options_.success)) options_.success(result_.message);
-					}else{
-						if(!isNull(options_.fail)) options_.fail(result_.result,result_.message);
+			options_ = $.extend(options_,{
+					type : "POST"
+					,contentType: "application/x-www-form-urlencoded; charset=UTF-8"
+					,url : requestURL_
+					,data : uploadForm_
+					,cache: false
+					,contentType: false
+					,processData: false
+					,async : true
+					,success : function(result_){
+						if(result_.result === 0){
+							if(!isNull(options_.success)) options_.success(result_.message);
+						}else{
+							if(!isNull(options_.fail)) options_.fail(result_.result,result_.message);
+						}
+						
+					},error : function(response_, error_, thrown_){
+						if(!isNull(options_.error)) options_.error(reponse_, error_, thrown_);
 					}
-					
-				},error : function(response_, error_, thrown_){
-					if(!isNull(options_.error)) options_.error(reponse_, error_, thrown_);
-				}
-			});
+				});
+			
+			$.ajax(options_);
 		}
 		/**
 		 * 쿠키를 설정/반환합니다.<br>
