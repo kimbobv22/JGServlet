@@ -39,7 +39,7 @@ public abstract class JGAction{
 	}
 	
 	@SuppressWarnings("unused")
-	private Object process(JGService service_, JGServiceBox serviceBox_) throws Exception{
+	private Object _process(JGService service_, JGServiceBox serviceBox_, String virtualMap_) throws Exception{
 		try{
 			Method method_ = getClass().getMethod(service_.getMappingMethod(),JGServiceBox.class);
 		}catch(NoSuchMethodException ex_){
@@ -47,7 +47,9 @@ public abstract class JGAction{
 		}
 		
 		try{
-			return (Integer)JGReflectionUtils.invokeMethod(this, service_.getMappingMethod(), serviceBox_);
+			if(virtualMap_ != null)
+				return JGReflectionUtils.invokeMethod(this, service_.getMappingMethod(), new Object[]{serviceBox_, virtualMap_});
+			else return JGReflectionUtils.invokeMethod(this, service_.getMappingMethod(), serviceBox_);
 		}catch(IllegalArgumentException ex_){
 			throw new Exception("Illegal argument for action method",ex_);
 		}catch(IllegalAccessException ex_){
@@ -59,6 +61,11 @@ public abstract class JGAction{
 		}finally{
 			clearDBConnection();
 		}
+	}
+	
+	@SuppressWarnings("unused")
+	private Object _process(JGService service_, JGServiceBox serviceBox_) throws Exception{
+		return _process(service_, serviceBox_, null);
 	}
 	
 	@Override

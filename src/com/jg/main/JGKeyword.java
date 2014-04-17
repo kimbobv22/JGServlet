@@ -7,6 +7,7 @@ public class JGKeyword{
 	static public final String STR_SERVICEID_SPLITTER_REGX = "\\"+STR_SERVICEID_SPLITTER; 
 	
 	static public final String STR_ELEMENT_SERVICESET = "serviceList";
+	static public final String STR_ELEMENT_VIRTUALMAP = "virtualMap";
 	static public final String STR_ELEMENT_SERVICE = "service";
 	static public final String STR_ELEMENT_ACTIONCLASSES = "actionClasses";
 	static public final String STR_ELEMENT_CLASS = "class";
@@ -27,6 +28,7 @@ public class JGKeyword{
 	static public final String STR_ATTRIBUTE_ISREDIRECT = "isRedirect";
 	static public final String STR_ATTRIBUTE_ISPRIVATE = "isPrivate";
 	static public final String STR_ATTRIBUTE_LOCALFILTER = "localFilter";
+	static public final String STR_ATTRIBUTE_PATTERN = "pattern";
 	
 	static public final String STR_REGEX_MAPPING_STRING = "[\\w-\\.]";
 	static private final String _STR_REGEX_MAPPING_STRING_GROUP = "\\{"+STR_REGEX_MAPPING_STRING+"+\\}";

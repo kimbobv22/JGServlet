@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import javax.servlet.ServletContext;
 
-import com.jg.action.handler.JGActionHandler;
+import com.jg.action.handler.JGServiceHandler;
 import com.jg.db.xml.JGDBXMLQueryManager;
 import com.jg.log.JGLog;
 import com.jg.main.JGMainConfig;
@@ -41,8 +41,8 @@ public class JGMainLoader extends HashMap<String, Object>{
 		
 		try{
 			JGLog.log(9,"Loading JGActionHandler...");
-			JGActionHandler.setXMLDirectoryPath(JGMainConfig.sharedConfig().getServicePath());
-			JGActionHandler.sharedHandler();
+			JGServiceHandler.setXMLDirectoryPath(JGMainConfig.sharedConfig().getServicePath());
+			JGServiceHandler.sharedHandler();
 		}catch(Exception ex_){
 			throw new Exception("Failed to load JGActionHandler",ex_);
 		}

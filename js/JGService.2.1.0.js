@@ -40,6 +40,15 @@
 			
 			var requestURL_ = this._requestURLs[urlKey_];
 			if(!isNull(objects_)){
+				var copy_ = $.extend(true, objects_);
+				for(var paramName_ in copy_){
+					var regexp_ = new RegExp("\\{" + paramName_ + "\\}");
+					if(regexp_.test(requestURL_)){
+						requestURL_ = requestURL_.replace(regexp_,objects_[paramName_]);
+						delete objects_[paramName_];
+					}
+				}
+				
 				requestURL_ += (requestURL_.indexOf("?") < 0 ? "?" : "&")+$.param(objects_);
 			}
 			return requestURL_;

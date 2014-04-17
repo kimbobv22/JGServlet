@@ -25,10 +25,10 @@ public class JGServiceFilter{
 		_localFilter = isLocalFilter_;
 	}
 	
-	protected void doFilter(JGActionHandler actionHandler_, JGServiceBox serviceBox_) throws Exception{
+	protected void doFilter(JGServiceHandler actionHandler_, JGServiceBox serviceBox_) throws Exception{
 		JGServiceKey tServiceKey_ =  serviceBox_.getRequestServiceKey();
 		if(!_localFilter || (_localFilter && tServiceKey_._mapName.equals(_serviceKey._mapName))){
-			actionHandler_.handleService(serviceBox_, _serviceKey, true, false);
+			actionHandler_.handleService(serviceBox_, _serviceKey, false, true, false);
 		}
 	}
 }

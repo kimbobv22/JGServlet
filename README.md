@@ -1,4 +1,4 @@
-#JGServlet for JAVA(Version 2.0.0)
+#JGServlet for JAVA(Version 2.1.0)
 ###with JGService for JavaScript
 ###사용하기 전, 반드시 라이센스를 확인하세요
 
@@ -39,22 +39,16 @@
 ###계략적 구조
 
 	// 기본 Servlet
-	JGMainServlet
+	JGHttpServlet
 		- JGServletErrorHandlerDef
 		- JGFilterChain
-		
-	// Http 요청 및 응답 Servlet
-	JGHttpServlet <-(상속)- JGMainServlet
 		- 요청/응답 제어 -> JGActionHandler -(인스턴스호출)-> JGAction
-		
-	// 파일 업로드/다운로드 제어(Multipart)
-	JGFileServlet
 	
 	// Context 리스너
 	JGMainServletContextListener -(호출/적재)-> JGMainLoader
 	
 	// 액션핸들러
-	JGActionHandler <-(해석/적재)- 서비스XML파일
+	JGServiceHandler <-(해석/적재)- 서비스XML파일
 		- 서비스를 해석하여 JGAction 호출
 		
 	// 유틸리티 클래스
@@ -213,7 +207,7 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 <br>
 ####서비스XML 기본형식
 
-서비스XML파일에서는 __액션클래스, 결과페이지, 서비스, 필터__ 를 정의를 할 수 있습니다.<br>
+서비스XML파일에서는 __액션클래스, 가상맵, 결과페이지, 서비스, 필터__ 를 정의를 할 수 있습니다.<br>
 
 	// 액션클래스 정의
 	<actionClasses>
@@ -242,6 +236,11 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 		// false 일 경우에는 Map과 상관없이 무조건 호출됩니다.
 		
 	</filters>
+	
+	// 가상맵(Virtual map)
+	<virtualMap pattern="..." serviceID="..." />
+	<virtualMap pattern="..." serviceID="..." />
+	...
 	
 <br>
 ####액션클래스 정의
@@ -283,6 +282,7 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 		<result pageName="testPage"/>
 	</service>
 <br>
+
 <a name="javaServiceDefinition"></a>
 ####서비스 정의 및 결과페이지 제어
 
@@ -533,16 +533,24 @@ JGService는 JavaScript 상에서 <code>JGService</code>로 호출 가능합니�
 	//요청 URL 가져오기
 	JGService.requsetURL(키값, JSON형식의 파라미터);
 
-	//예제
+	//예제 1
 	JGService.requestURL("test","http://localhost:8090/test");
 	var requestURL_ = JGService.requsetURL("test", {
 		srvID : "testId"
 		,hello : "world"
 	});
-	
 	// 결과값
 	http://localhost:8090/test?srvID=testId&hello=world
-
+	
+	//예제 2
+	JGService.requestURL("test1","http://localhost:8090/test/{srvID}");
+	var requestURL_ = JGService.requsetURL("test1", {
+		srvID : "testId"
+		,hello : "world"
+	});
+	// 결과값
+	http://localhost:8090/test/testId?srvID=testId&hello=world
+	
 <br>	
 ####동기방식으로 서비스 요청하기
 	

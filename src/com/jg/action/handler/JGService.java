@@ -152,7 +152,7 @@ public class JGService{
 		_actionClassName = actionClassName_;
 		_mappingMethod = mappingMethod_;
 		if(JGServiceKey.isFullKey(fServiceId_)){
-			_fServiceKey = new JGServiceKey(fServiceId_);
+			_fServiceKey = JGServiceKey.makeKey(fServiceId_);
 		}else if(!JGStringUtils.isBlank(fServiceId_)){
 			_fServiceKey = new JGServiceKey(_serviceKey._mapName,fServiceId_);
 		}

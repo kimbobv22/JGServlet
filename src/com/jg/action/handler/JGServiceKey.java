@@ -18,15 +18,12 @@ public class JGServiceKey {
 		return _serviceID;
 	}
 	
+	protected String _virtualMap = null;
+	
 	protected JGServiceKey(){}
 	public JGServiceKey(String mapName_, String serviceID_){
 		_mapName = mapName_;
 		_serviceID = serviceID_;
-	}
-	public JGServiceKey(String fullKey_){
-		String[] splitedKeys_ = fullKey_.split(JGKeyword.STR_SERVICEID_SPLITTER_REGX);
-		_mapName = splitedKeys_[0];
-		_serviceID = splitedKeys_[1];
 	}
 	
 	public boolean equalsWithOtherKey(JGServiceKey otherKey_){
@@ -50,6 +47,14 @@ public class JGServiceKey {
 			JGMultipartData multipartData_ = serviceBox_.multipartData();
 			return new JGServiceKey(servletPath_, multipartData_.getFormFieldValue(JGKeyword.STR_SERVICEID));
 		}else return new JGServiceKey(servletPath_, request_.getParameter(JGKeyword.STR_SERVICEID));
+	}
+	static public JGServiceKey makeKey(String fullKey_){
+		if(isFullKey(fullKey_)){
+			String[] splitedKeys_ = fullKey_.split(JGKeyword.STR_SERVICEID_SPLITTER_REGX);
+			return new JGServiceKey(splitedKeys_[0], splitedKeys_[1]);
+		}else if(!JGStringUtils.isBlank(fullKey_) && fullKey_.indexOf("/") >= 0){
+			return new JGServiceKey(fullKey_, null);
+		}else return new JGServiceKey(null, fullKey_);
 	}
 	static public boolean isFullKey(String key_){
 		return !JGStringUtils.isBlank(key_) && key_.indexOf(JGKeyword.STR_SERVICEID_SPLITTER) >= 0;

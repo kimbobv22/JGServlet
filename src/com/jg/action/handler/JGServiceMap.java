@@ -83,16 +83,22 @@ public class JGServiceMap{
 		}
 	}
 	
-	private ArrayList<JGServiceMap.JGResultPageDef> _resultPageDefs = new ArrayList<JGServiceMap.JGResultPageDef>();
+	protected ArrayList<JGServiceMap.JGResultPageDef> _resultPageDefs = new ArrayList<JGServiceMap.JGResultPageDef>();
 	
-	private boolean _isPrimary = false;
+	protected String _name = null;
+	public String getName(){
+		return _name;
+	}
+	
+	protected boolean _isPrimary = false;
 	public boolean isPrimary(){
 		return _isPrimary;
 	}
 	protected void setPrimary(boolean bool_){
 		_isPrimary = bool_;
 	}
-	public JGServiceMap(boolean isPrimary_){
+	public JGServiceMap(String mapName_, boolean isPrimary_){
+		_name = mapName_;
 		_isPrimary = isPrimary_;
 	}
 	
@@ -200,5 +206,37 @@ public class JGServiceMap{
 		}
 		
 		return -1;
+	}
+	
+	protected ArrayList<JGVirtualMap> _virtualMaps = new ArrayList<JGVirtualMap>();
+	public int sizeOfVirtualMap(){
+		return _virtualMaps.size();
+	}
+	
+	protected void addVirtualMap(JGVirtualMap map_){
+		_virtualMaps.add(map_);
+	}
+	protected void removeVirtualMap(int index_){
+		_virtualMaps.remove(index_);
+	}
+	protected void removeVirtualMap(JGVirtualMap map_){
+		removeVirtualMap(indexOfVirtualMap(map_));
+	}
+	public JGVirtualMap getVirtualMap(int index_){
+		return _virtualMaps.get(index_);
+	}
+	
+	public int indexOfVirtualMap(JGVirtualMap map_){
+		return _virtualMaps.indexOf(map_);
+	}
+	
+	public JGVirtualMap getVirtualMapWithTest(String str_){
+		int length_ = _virtualMaps.size();
+		for(int index_=0;index_<length_;++index_){
+			JGVirtualMap virtualMap_ = _virtualMaps.get(index_);
+			if(virtualMap_.test(str_)) return virtualMap_;
+		}
+		
+		return null;
 	}
 }

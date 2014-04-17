@@ -42,5 +42,6 @@ public class JGReflectionUtils{
 	public static Object invokeMethod(Object target_, String methodName_, Object... parameters_) throws NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
 		return invokeMethod(target_, target_.getClass(), methodName_, parameters_);
 	}
+
 }
 

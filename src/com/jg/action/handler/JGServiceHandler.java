@@ -2,8 +2,6 @@ package com.jg.action.handler;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,13 +23,13 @@ import com.jg.util.JGFileUtils;
 import com.jg.util.JGReflectionUtils;
 import com.jg.util.JGStringUtils;
 
-public class JGActionHandler{
+public class JGServiceHandler{
 	
-	static private JGActionHandler _sharedHandler = null;
-	static public JGActionHandler sharedHandler() throws Exception{
+	static private JGServiceHandler _sharedHandler = null;
+	static public JGServiceHandler sharedHandler() throws Exception{
 		if(_sharedHandler == null){
-			synchronized(JGActionHandler.class){
-				_sharedHandler = new JGActionHandler();
+			synchronized(JGServiceHandler.class){
+				_sharedHandler = new JGServiceHandler();
 			}
 		}
 		return _sharedHandler;
@@ -45,33 +43,80 @@ public class JGActionHandler{
 		return _XMLDirectoryPath;
 	}
 	
-	HashMap<String, JGServiceMap> _serviceMaps = new HashMap<String, JGServiceMap>();
+	protected ArrayList<JGServiceMap> _serviceMaps = new ArrayList<JGServiceMap>();
 	
 	public int sizeOfServiceMaps(){
 		return _serviceMaps.size();
 	}
 	
-	protected void setServiceMap(String mapName_, JGServiceMap serviceMap_){
-		_serviceMaps.put(mapName_, serviceMap_);
+	protected void addServiceMap(JGServiceMap serviceMap_){
+		_serviceMaps.add(serviceMap_);
+	}
+	protected void removeServiceMap(int index_){
+		_serviceMaps.remove(index_);
 	}
 	protected void removeServiceMap(String mapName_){
 		_serviceMaps.remove(mapName_);
 	}
-	public JGServiceMap getServiceMap(String mapName_){
-		return _serviceMaps.get(mapName_);
+	public JGServiceMap getServiceMap(int index_){
+		return _serviceMaps.get(index_);
 	}
+	public JGServiceMap getServiceMap(String mapName_){
+		return _serviceMaps.get(indexOfServiceMap(mapName_));
+	}
+	public int indexOfServiceMap(JGServiceMap serviceMap_){
+		return _serviceMaps.indexOf(serviceMap_);
+	}
+	public int indexOfServiceMap(String mapName_){
+		int length_ = _serviceMaps.size();
+		for(int index_=0;index_<length_;++index_){
+			JGServiceMap serviceMap_ = _serviceMaps.get(index_);
+			if(serviceMap_._name.equals(mapName_))
+				return index_;
+		}
+		
+		return -1;
+	}
+	
 	public JGServiceMap getPrimaryServiceMap(){
-		Iterator<String> keyIterator_ = _serviceMaps.keySet().iterator();
-		while(keyIterator_.hasNext()){
-			String mapName_ = keyIterator_.next();
-			JGServiceMap serviceMap_ = getServiceMap(mapName_);
-			if(serviceMap_.isPrimary()){
+		int length_ = _serviceMaps.size();
+		for(int index_=0;index_<length_;++index_){
+			JGServiceMap serviceMap_ = _serviceMaps.get(index_);
+			if(serviceMap_._isPrimary)
 				return serviceMap_;
-			}
 		}
 		
 		return null;
 	}
+	
+	public JGService getService(JGServiceKey serviceKey_, boolean checkPrimary_) throws Exception{
+		JGServiceMap serviceMap_ = null;
+		JGService service_ = null;
+		
+		if(checkPrimary_ && serviceKey_._mapName == null)
+			serviceMap_ = getPrimaryServiceMap();
+		else{
+			int mapIndex_ = indexOfServiceMap(serviceKey_._mapName);
+			if(mapIndex_ < 0){
+				throw new JGServiceNotFoundException(serviceKey_, "can't find Service Map : "+serviceKey_._mapName);
+			}
+			serviceMap_ = getServiceMap(mapIndex_);
+		}
+		
+		if(checkPrimary_ && serviceKey_._serviceID == null)
+			service_ = serviceMap_.getPrimaryService();
+		else{
+			int serviceIndex_ = serviceMap_.indexOfService(serviceKey_._serviceID);
+			if(serviceIndex_ < 0){
+				throw new JGServiceNotFoundException(serviceKey_, "can't find Service : "+serviceKey_._serviceID);
+			}
+			service_ = serviceMap_.getService(serviceIndex_);
+		}
+		
+		return service_;
+	}
+	
+	
 	
 	protected ArrayList<JGServiceFilter> _filters = new ArrayList<JGServiceFilter>();
 	public int sizeOfFilters(){
@@ -84,7 +129,7 @@ public class JGActionHandler{
 		_filters.add(filter_);
 	}
 	
-	public JGActionHandler() throws Exception{
+	public JGServiceHandler() throws Exception{
 		reload();
 	}
 	
@@ -120,7 +165,19 @@ public class JGActionHandler{
 			Document rootDocument_ = new SAXBuilder().build(new File(childPath_));
 			Element serviceMapElement_ = rootDocument_.getRootElement();
 			
-			JGServiceMap serviceMap_ = new JGServiceMap(JGStringUtils.getBoolean(serviceMapElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_ISPRIMARY), false));
+			JGServiceMap serviceMap_ = new JGServiceMap(mapName_, JGStringUtils.getBoolean(serviceMapElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_ISPRIMARY), false));
+			
+			//virtual maps
+			List<?> virtualMapList_ = serviceMapElement_.getChildren(JGKeyword.STR_ELEMENT_VIRTUALMAP);
+			int virtualMapCount_ = virtualMapList_.size();
+			for(int index_=0;index_<virtualMapCount_;++index_){
+				Element virtualMapElement_ = (Element)virtualMapList_.get(index_);
+				JGServiceKey serviceKey_ = JGServiceKey.makeKey(virtualMapElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_SERVICEID));
+				if(serviceKey_._mapName == null)
+					serviceKey_._mapName = mapName_;
+				
+				serviceMap_.addVirtualMap(new JGVirtualMap(virtualMapElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_PATTERN), serviceKey_));
+			}
 			
 			//action classes
 			Element actionClassesElement_ = serviceMapElement_.getChild(JGKeyword.STR_ELEMENT_ACTIONCLASSES);
@@ -168,13 +225,7 @@ public class JGActionHandler{
 						String fullKey_ = filterElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_SERVICEID);
 						boolean isLocalFilter_ = JGStringUtils.getBoolean(filterElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_LOCALFILTER), true);
 						
-						JGServiceKey serviceKey_ = null;
-						if(JGServiceKey.isFullKey(fullKey_)){
-							serviceKey_ = new JGServiceKey(fullKey_);
-						}else{
-							serviceKey_ = new JGServiceKey(mapName_, fullKey_);
-						}
-						
+						JGServiceKey serviceKey_ = JGServiceKey.makeKey(fullKey_);
 						addFilter(new JGServiceFilter(serviceKey_, isLocalFilter_));
 					}	
 				}
@@ -231,54 +282,14 @@ public class JGActionHandler{
 			}
 			JGLog.log(9," - Loaded services, total : "+serviceMap_.sizeOfService());
 			
-			_serviceMaps.put(mapName_, serviceMap_);
+			_serviceMaps.add(serviceMap_);
 			
 		}catch(Exception ex_){
 			throw new Exception("failed to read web service XML file",ex_);
 		}
 	}
 	
-	public JGService getService(JGServiceKey serviceKey_,boolean checkPrimary_) throws Exception{
-		JGServiceMap serviceMap_ = null;
-		if(checkPrimary_ && serviceKey_._mapName == null){
-			JGServiceMap pServiceMap_ = getPrimaryServiceMap();
-			if(pServiceMap_ == null){
-				throw new Exception("Service mapName is null");
-			}
-			serviceMap_ = pServiceMap_;
-		}else{
-			serviceMap_ = getServiceMap(serviceKey_.getMapName());
-			if(serviceMap_ == null){
-				throw new Exception("can't not find Service map : "+serviceKey_._mapName);
-			}
-		}
-		
-		JGService service_ = null;
-		if(checkPrimary_ && serviceKey_._serviceID == null){
-			JGService pService_ = serviceMap_.getPrimaryService();
-			if(pService_ == null){
-				throw new Exception("Service key is null");
-			}
-			service_ = pService_;
-		}else{
-			service_ = serviceMap_.getService(serviceKey_.getServiceID());
-		}
-		
-		return service_;
-	}
-	public JGService getService(String mapName_, String serviceID_) throws Exception{
-		return getService(new JGServiceKey(mapName_, serviceID_),false);
-	}
-	public JGService getPrimaryService() throws Exception{
-		JGServiceMap serviceMap_ = getPrimaryServiceMap();
-		if(serviceMap_ == null){
-			return null;
-		}
-		
-		return serviceMap_.getPrimaryService();
-	}
-	
-	protected String convertStringByMappingRegex(String targetString_, JGServiceBox serviceBox_) throws Exception{
+	private String _convertStringByMappingRegex(String targetString_, JGServiceBox serviceBox_) throws Exception{
 		//convert mapping paramters
 		Pattern paramterPattern_ = Pattern.compile(JGKeyword.STR_REGEX_MAPPING_PARAMETER);
 		Matcher paramterPatternMatcher_ = paramterPattern_.matcher(targetString_);
@@ -310,33 +321,66 @@ public class JGActionHandler{
 		return targetString_;
 	}
 	
-	private Object _handleService(JGServiceBox serviceBox_, JGService service_) throws Exception{
+	private Object _handleService(JGServiceBox serviceBox_, JGServiceKey serviceKey_, JGService service_) throws Exception{
 		Object resultObject_ = null;
 		
 		String actionClassName_ = service_.getActionClassName();
 		JGServiceKey fServiceKey_ = service_.getForwardServiceKey();
 		if(actionClassName_ != null){
-			resultObject_ = _processAction(serviceBox_, service_);
+			resultObject_ = _processAction(serviceBox_, serviceKey_, service_);
 		}else if(fServiceKey_ != null){
-			resultObject_ = _handleService(serviceBox_, getService(fServiceKey_,false));
+			resultObject_ = _handleService(serviceBox_, fServiceKey_, getService(fServiceKey_, false));
 		}
 		
 		return resultObject_;
 	}
 	
-	protected void handleService(JGServiceBox serviceBox_, JGService service_, boolean isSubService_, boolean doResult_) throws Exception{
-		if(!isSubService_){
+	private JGServiceKey _virtualizeServiceKey(JGServiceKey serviceKey_) throws Exception{
+		String orgMapName_ = serviceKey_.getMapName();
+		int orgMapIndex_ = indexOfServiceMap(orgMapName_);
+		
+		if(orgMapName_ != null && orgMapIndex_ < 0){
+			String subMapName_ = orgMapName_;
+			int splitCharIndex_ = -1;
+			int serviceMapIndex_ = -1;
+			while((splitCharIndex_ = subMapName_.lastIndexOf("/")) >= 0){
+				subMapName_ = subMapName_.substring(0,splitCharIndex_);
+				String virtualMapName_ = orgMapName_.substring(splitCharIndex_+1);
+				serviceMapIndex_ = indexOfServiceMap(subMapName_);
+				if(serviceMapIndex_ >= 0){
+					JGServiceMap subMap_ = getServiceMap(serviceMapIndex_);
+					JGVirtualMap virtualMap_ = subMap_.getVirtualMapWithTest(virtualMapName_);
+					if(virtualMap_ != null){
+						JGServiceKey vServiceKey_ = new JGServiceKey(virtualMap_._serviceKey._mapName, virtualMap_._serviceKey._serviceID);
+						vServiceKey_._virtualMap = virtualMapName_;
+						return vServiceKey_;
+					}
+				}
+				
+			}
+		}
+		
+		return serviceKey_;
+	}
+	
+	public void handleService(JGServiceBox serviceBox_, JGServiceKey serviceKey_, boolean checkPrimary_, boolean isSubService_, boolean doResult_) throws Exception{
+		JGService service_ = null;
+		
+		if(!isSubService_){ // frist request
+			serviceKey_ = _virtualizeServiceKey(serviceKey_);
+			service_ = getService(serviceKey_, checkPrimary_);
+			
 			if(service_.isPrivate())
-				throw new Exception("Can't not access private service : "+serviceBox_.getRequestServiceKey().toString());
+				throw new Exception("Can't not access private service : "+serviceKey_.toString());
 			
 			int sizeOfFilters_ = sizeOfFilters();
 			for(int fIndex_=0;fIndex_<sizeOfFilters_;++fIndex_){
 				JGServiceFilter filter_ = _filters.get(fIndex_);
 				filter_.doFilter(this, serviceBox_);
 			}
-		}
+		}else service_ = getService(serviceKey_, checkPrimary_);
 		
-		Object resultObject_ = _handleService(serviceBox_, service_);
+		Object resultObject_ = _handleService(serviceBox_, serviceKey_, service_);
 		
 		if(!doResult_) return;
 		
@@ -353,12 +397,12 @@ public class JGActionHandler{
 			
 			//forwarding to service
 			if(!JGStringUtils.isBlank(fServiceID_)){
-				fServiceID_ = convertStringByMappingRegex(fServiceID_, serviceBox_);
+				fServiceID_ = _convertStringByMappingRegex(fServiceID_, serviceBox_);
 				
 				if(!JGServiceKey.isFullKey(fServiceID_)){
-					handleService(serviceBox_, service_.getParentMap().getService(fServiceID_),true);
+					handleService(serviceBox_, new JGServiceKey(service_.getParentMap()._name,fServiceID_), false, true, true);
 				}else{
-					handleService(serviceBox_, getService(new JGServiceKey(fServiceID_),false),true);
+					handleService(serviceBox_, JGServiceKey.makeKey(fServiceID_) ,false, true, true);
 				}
 			}
 			//forwarding to result page
@@ -374,7 +418,7 @@ public class JGActionHandler{
 					page_ = resultPageDef_.getPage();
 				}
 				
-				page_ = convertStringByMappingRegex(page_, serviceBox_);
+				page_ = _convertStringByMappingRegex(page_, serviceBox_);
 				
 				if(resultDef_.isRedirect()){
 					serviceBox_.getResponse().sendRedirect(page_);
@@ -385,22 +429,6 @@ public class JGActionHandler{
 				}
 			}
 		}
-	}
-	
-	public void handleService(JGServiceBox serviceBox_, JGService service_, boolean isSubService_) throws Exception{
-		handleService(serviceBox_, service_, isSubService_, true);
-	}
-	protected void handleService(JGServiceBox serviceBox_, boolean isSubService_, boolean doResult_) throws Exception{
-		handleService(serviceBox_, getService(serviceBox_.getRequestServiceKey(), false), isSubService_, doResult_);
-	}
-	protected void handleService(JGServiceBox serviceBox_, boolean isSubService_) throws Exception{
-		handleService(serviceBox_, isSubService_, true);
-	}
-	protected void handleService(JGServiceBox serviceBox_, JGServiceKey serviceKey_, boolean isSubService_, boolean doResult_) throws Exception{
-		handleService(new JGServiceBox(serviceBox_.getRequest(), serviceBox_.getResponse(), serviceKey_), isSubService_, doResult_);
-	}
-	protected void handleService(JGServiceBox serviceBox_, JGServiceKey serviceKey_, boolean isSubService_) throws Exception{
-		handleService(serviceBox_, serviceKey_, isSubService_, true);
 	}
 	
 	protected JGAction makeAction(JGService service_) throws Exception{
@@ -416,9 +444,15 @@ public class JGActionHandler{
 	protected JGAction makeAction(JGServiceKey serviceKey_) throws Exception{
 		return makeAction(getService(serviceKey_,false));
 	}
-	private Object _processAction(JGServiceBox serviceBox_, JGService service_) throws Exception{
+	private Object _processAction(JGServiceBox serviceBox_, JGServiceKey serviceKey_, JGService service_) throws Exception{
 		JGAction action_ = makeAction(service_);
+		
+		Object[] args_ = null;
+		if(serviceKey_._virtualMap != null)
+			args_ = new Object[]{service_, serviceBox_, serviceKey_._virtualMap};
+		else args_ = new Object[]{service_, serviceBox_};
+		
 		return JGReflectionUtils.invokeMethod(action_, action_.getClass().getSuperclass()
-				, "process", new Object[]{service_, serviceBox_});
+				, "_process", args_);
 	}
 }
