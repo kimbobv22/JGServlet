@@ -5,7 +5,7 @@
 		<character-encoding>UTF-8</character-encoding>
 		<dirpath-service>xml/serviceXML/</dirpath-service>
 		<dirpath-query>xml/queryXML/</dirpath-query>
-		<file-root-path>/testPath/</file-root-path>
+		<file-root-path>/Users/kimbobv22/uploads</file-root-path>
 		<file-reject-regexp>[\w\-\.]+[\.](php|jsp|asp)</file-reject-regexp>
 		<file-image-compression>true</file-image-compression>
 		<file-image-compression-regexp>[\w\-\.]+[\.](jpg|jpeg|png)</file-image-compression-regexp>

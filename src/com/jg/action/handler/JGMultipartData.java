@@ -18,7 +18,6 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.jg.action.handler.JGMultipartUploadProgressListener.JGUploadProgressStatus;
 import com.jg.main.JGMainConfig;
-import com.jg.util.JGCommonUtils;
 import com.jg.util.JGDrawingUtils;
 import com.jg.util.JGFileUtils;
 
@@ -50,11 +49,13 @@ public class JGMultipartData{
 		ArrayList<JGMultipartUploadResult> result_ = new ArrayList<JGMultipartUploadResult>();
 		
 		String fileUploadRootPath_ = JGMainConfig.sharedConfig().getFileRootPath();
-		String targetFilePath_ = (String)JGCommonUtils.NVL(getFormFieldValue("path"), "");
+		if(fileUploadRootPath_.lastIndexOf(File.separator) == fileUploadRootPath_.length()-1)
+			fileUploadRootPath_ = fileUploadRootPath_.substring(0, fileUploadRootPath_.length()-1);
+		
 		for(FileItem fileItem_ : _uploadDataList){
 			JGMultipartUploadResult uploadResult_ = new JGMultipartUploadResult();
 			String fileName_ = fileItem_.getName();
-			String orgFilePath_ = targetFilePath_+fileName_;
+			String orgFilePath_ = fileName_;
 			
 			uploadResult_._originalPath = orgFilePath_;
 			uploadResult_._fileSize = fileItem_.getSize();
@@ -68,6 +69,17 @@ public class JGMultipartData{
 				}
 				
 				String newFileName_ = handler_.renameFile(fileItem_);
+				String newFilePath_ = null;
+				
+				int fileNameIndex_ = newFileName_.lastIndexOf(File.separator);
+				if(fileNameIndex_ >= 0)
+					newFilePath_ = newFileName_.substring(0,fileNameIndex_+1);  
+				else newFilePath_ = File.separator;
+				
+				if(newFilePath_.indexOf(File.separator) < 0)
+					newFilePath_ = File.separator+newFilePath_; 
+				
+				newFileName_ = new File(newFileName_).getName();
 				
 				if(JGMainConfig.sharedConfig().isCompressionImage()
 						&& Pattern.compile(JGMainConfig.sharedConfig().getFileImageCompressionRegexp()).matcher(fileName_).find()){
@@ -75,17 +87,18 @@ public class JGMultipartData{
 					BufferedImage compedImage_ = JGDrawingUtils.resizeImage(orgImage_, orgImage_.getWidth(), orgImage_.getHeight());
 					
 					newFileName_ += ".jpg";
-					File targetFile_ = new File(fileUploadRootPath_+targetFilePath_, newFileName_);
-					targetFile_.mkdirs();
+					new File(fileUploadRootPath_+newFilePath_).mkdirs();
+					File targetFile_ = new File(fileUploadRootPath_+newFilePath_, newFileName_);
 					ImageIO.write(compedImage_, "jpg", targetFile_);
 				}else{
 					newFileName_ += "."+JGFileUtils.getSuffix(fileName_);
-					new File(fileUploadRootPath_+targetFilePath_).mkdirs();
-					File targetFile_ = new File(fileUploadRootPath_+targetFilePath_, newFileName_);
+					
+					new File(fileUploadRootPath_+newFilePath_).mkdirs();
+					File targetFile_ = new File(fileUploadRootPath_+newFilePath_, newFileName_);
 					fileItem_.write(targetFile_);
 				}
 				
-				uploadResult_._uploadPath = targetFilePath_+newFileName_;
+				uploadResult_._uploadPath = newFilePath_+newFileName_;
 				uploadResult_._didUpload = true;
 				handler_.fileUploaded(fileItem_, uploadResult_);
 			}

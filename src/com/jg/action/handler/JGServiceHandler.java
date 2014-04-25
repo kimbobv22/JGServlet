@@ -226,6 +226,7 @@ public class JGServiceHandler{
 						boolean isLocalFilter_ = JGStringUtils.getBoolean(filterElement_.getAttributeValue(JGKeyword.STR_ATTRIBUTE_LOCALFILTER), true);
 						
 						JGServiceKey serviceKey_ = JGServiceKey.makeKey(fullKey_);
+						if(serviceKey_._mapName == null) serviceKey_._mapName = mapName_;
 						addFilter(new JGServiceFilter(serviceKey_, isLocalFilter_));
 					}	
 				}
@@ -367,7 +368,7 @@ public class JGServiceHandler{
 		JGService service_ = null;
 		
 		if(!isSubService_){ // frist request
-			serviceKey_ = _virtualizeServiceKey(serviceKey_);
+			serviceBox_._requestServiceKey = serviceKey_ = _virtualizeServiceKey(serviceKey_);
 			service_ = getService(serviceKey_, checkPrimary_);
 			
 			if(service_.isPrivate())
@@ -376,7 +377,7 @@ public class JGServiceHandler{
 			int sizeOfFilters_ = sizeOfFilters();
 			for(int fIndex_=0;fIndex_<sizeOfFilters_;++fIndex_){
 				JGServiceFilter filter_ = _filters.get(fIndex_);
-				filter_.doFilter(this, serviceBox_);
+				filter_.doFilter(this, serviceBox_, service_);
 			}
 		}else service_ = getService(serviceKey_, checkPrimary_);
 		
@@ -398,12 +399,14 @@ public class JGServiceHandler{
 			//forwarding to service
 			if(!JGStringUtils.isBlank(fServiceID_)){
 				fServiceID_ = _convertStringByMappingRegex(fServiceID_, serviceBox_);
+				JGServiceKey fServiceKey_ = null;
 				
 				if(!JGServiceKey.isFullKey(fServiceID_)){
-					handleService(serviceBox_, new JGServiceKey(service_.getParentMap()._name,fServiceID_), false, true, true);
+					fServiceKey_ = new JGServiceKey(service_.getParentMap()._name,fServiceID_);
 				}else{
-					handleService(serviceBox_, JGServiceKey.makeKey(fServiceID_) ,false, true, true);
+					fServiceKey_ = JGServiceKey.makeKey(fServiceID_);
 				}
+				handleService(serviceBox_, fServiceKey_ ,false, true, true);
 			}
 			//forwarding to result page
 			else{

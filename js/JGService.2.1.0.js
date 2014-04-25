@@ -171,7 +171,6 @@
 			
 			var requestURL_ = convertRequestURL(this.requestURL(urlKey_), parameters_);
 			var uploadForm_ = new FormData();
-			uploadForm_.append("path", options_.path);
 			
 			for(var key_ in parameters_){
 				uploadForm_.append(key_, parameters_[key_]);
@@ -245,14 +244,21 @@
 				return null;
 			}
 			
-			var cookies_ = name_ + "=" + escape(value_) + "; path=/ ";
-			if(expireDay_ !== undefined){
-				if($.type(expireDay_) === "string")
-					expireDay_ = new Date(expireDay_);
-				cookies_ += ";expires=" + expireDay_.toGMTString() + ";";
+			if(value_ === null){
+				this.removeCookie(name_);
+				return;
 			}
+			
+			var cookies_ = name_ + "=" + escape(value_) + ";path=/;";
+			var cookieDay_ = new Date();
+			if(typeof expireDay_ === "string")
+				cookieDay_ = new Date(expireDay_);
+			else if(typeof expireDay_ === "number"){
+				cookieDay_.setDate(cookieDay_.getDate() + cookieDay_);
+			}
+			
+			cookies_ += "expires=" + cookieDay_.toGMTString() + ";";
 			document.cookie = cookies_;
-			return this.cookie(name_);
 		}
 		/**
 		 * 쿠키를 삭제합니다.
@@ -261,7 +267,7 @@
 		 * @param {String} name_ 쿠키명
 		 */
 		,removeCookie : function(name_){
-			document.cookie = name_ + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+			document.cookie = (name_ + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;");
 		},_mobileCheckMetaData : {
 			android: function() {
 				return navigator.userAgent.match(/Android/i);

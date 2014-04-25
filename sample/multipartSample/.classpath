@@ -15,7 +15,7 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/standard.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/JGServlet.2.0.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/JGServlet.2.1.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/JGDataset.1.1.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-lang3-3.2.1.jar"/>

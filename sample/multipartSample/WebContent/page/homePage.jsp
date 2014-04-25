@@ -19,7 +19,6 @@ JGService.requestURL("main","main");
 function doUpload(){
 	JGService.sendMultipart("main",{
 		srvID : "mulipartUpload"
-		,path : "files"
 		,testParameter : "test parameter"
 	},{
 		mutiple : true

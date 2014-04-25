@@ -25,9 +25,10 @@ public class JGServiceFilter{
 		_localFilter = isLocalFilter_;
 	}
 	
-	protected void doFilter(JGServiceHandler actionHandler_, JGServiceBox serviceBox_) throws Exception{
-		JGServiceKey tServiceKey_ =  serviceBox_.getRequestServiceKey();
-		if(!_localFilter || (_localFilter && tServiceKey_._mapName.equals(_serviceKey._mapName))){
+	protected void doFilter(JGServiceHandler actionHandler_, JGServiceBox serviceBox_, JGService service_) throws Exception{
+		JGServiceKey tServiceKey_ = service_._serviceKey;
+		if(!_localFilter
+				|| (_localFilter && tServiceKey_._mapName != null && tServiceKey_._mapName.equals(_serviceKey._mapName))){
 			actionHandler_.handleService(serviceBox_, _serviceKey, false, true, false);
 		}
 	}

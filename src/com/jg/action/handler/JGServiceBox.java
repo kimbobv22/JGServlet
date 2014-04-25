@@ -8,8 +8,8 @@ import javax.servlet.http.HttpSession;
 import com.jg.vo.JGDataset;
 
 public class JGServiceBox{
-	private HttpServletRequest _request = null;
-	private HttpServletResponse _response = null;
+	protected HttpServletRequest _request = null;
+	protected HttpServletResponse _response = null;
 	public HttpServletRequest getRequest(){
 		return _request;
 	}
@@ -25,12 +25,12 @@ public class JGServiceBox{
 		return _multipartData;
 	}
 	
-	private JGResponseWriter _writer = null;
+	protected JGResponseWriter _writer = null;
 	public JGResponseWriter writer(){
 		return _writer;
 	}
 	
-	private JGServiceKey _requestServiceKey = null;
+	protected JGServiceKey _requestServiceKey = null;
 	public JGServiceKey getRequestServiceKey(){
 		return _requestServiceKey;
 	}

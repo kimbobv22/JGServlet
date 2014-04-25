@@ -41,6 +41,10 @@ public class JGServiceKey {
 		
 		if(servletPath_.length() == 0){
 			servletPath_ = null;
+		}else{
+			int lastIndex_ = servletPath_.lastIndexOf("/");
+			if(lastIndex_+1 == servletPath_.length())
+				servletPath_ = servletPath_.substring(0,lastIndex_);
 		}
 		
 		if(JGMultipartData.isMultipart(request_)){

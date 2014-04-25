@@ -13,9 +13,9 @@ public class JGServletDefaultErrorHandler extends JGServletErrorHandlerDef{
 		response_.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
 	}
 	protected void didRaiseError(Throwable error_, HttpServletRequest request_, HttpServletResponse response_) throws ServletException, IOException{
-		response_.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		response_.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, error_.getLocalizedMessage());
 	}
 	protected void serviceNotFound(JGServiceKey serviceKey_, HttpServletRequest request_, HttpServletResponse response_) throws ServletException, IOException{
-		response_.sendError(HttpServletResponse.SC_NOT_FOUND);
+		response_.sendError(HttpServletResponse.SC_NOT_FOUND, serviceKey_.toString());
 	}
 }
