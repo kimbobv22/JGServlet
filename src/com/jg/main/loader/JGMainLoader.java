@@ -34,7 +34,7 @@ public class JGMainLoader extends HashMap<String, Object>{
 		try{
 			JGLog.log(9,"Initializing JGServlet...");
 			JGLog.log(9,"Loading JGMainConfig...");
-			JGMainConfig.makeSharedConfig(servletContext_.getRealPath("WEB-INF"));
+			JGMainConfig.makeSharedConfig(servletContext_.getRealPath("/WEB-INF"));
 		}catch(Exception ex_){
 			throw new Exception("Failed to load JGMainConfig", ex_);
 		}
