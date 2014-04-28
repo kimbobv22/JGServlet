@@ -1,0 +1,10 @@
+bin/com/jg/action/handler/JGMultipartData.class
+bin/com/jg/action/handler/JGMultipartDefaultUploadHandler.class
+bin/com/jg/action/handler/JGMultipartUploadHandlerDef.class
+bin/com/jg/action/handler/JGServiceBox.class
+bin/com/jg/action/handler/JGServiceHandler.class
+bin/com/jg/action/handler/JGServiceKey.class
+bin/com/jg/action/handler/JGServiceNotFoundException.class
+bin/com/jg/action/handler/JGVirtualMap.class
+bin/com/jg/main/JGMainConfig.class
+bin/com/jg/main/JGServletDefaultErrorHandler.class
