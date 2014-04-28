@@ -11,6 +11,10 @@ import org.json.simple.JSONObject;
 import com.jg.main.JGMainConfig;
 
 public class JGResponseWriter {
+	
+	static public final String RT_APPLICATION_JSON = "application/json";
+	static public final String RT_TEXT_HTML = "text/html";
+	
 	private HttpServletResponse _response = null;
 	private StringBuffer _stringBuffer = new StringBuffer();
 	public StringBuffer getStringBuffer(){
@@ -44,7 +48,7 @@ public class JGResponseWriter {
 		print(contentType_,JGMainConfig.sharedConfig().getCharacterEncoding());
 	}
 	public void print() throws Exception{
-		print("text/html");
+		print(RT_TEXT_HTML);
 	}
 	
 	public void appendAndPrint(Object object_, String contentType_, String charset_) throws Exception{
@@ -66,12 +70,12 @@ public class JGResponseWriter {
 		resultMap_.put("result", resultCode_);
 		resultMap_.put("message", message_);
 		append(new JSONObject(resultMap_).toJSONString());
-		print("application/json");
+		print(RT_APPLICATION_JSON);
 	}
 	public void printResultJSON(int result_) throws Exception{
 		printResultJSON(result_,null);
 	}
-
+	
 	public void clear(){
 		_stringBuffer = new StringBuffer();
 	}

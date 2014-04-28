@@ -197,6 +197,11 @@
 					});
 				}
 			}
+			
+			var callbackSuccess_ = options_.success;
+			var callbackFail_ = options_.fail;
+			var callbackError_ = options_.error;
+			
 			options_ = $.extend(options_,{
 					type : "POST"
 					,contentType: "application/x-www-form-urlencoded; charset=UTF-8"
@@ -208,13 +213,13 @@
 					,async : true
 					,success : function(result_){
 						if(result_.result === 0){
-							if(!isNull(options_.success)) options_.success(result_.message);
+							if(!isNull(callbackSuccess_)) callbackSuccess_(result_.message);
 						}else{
-							if(!isNull(options_.fail)) options_.fail(result_.result,result_.message);
+							if(!isNull(callbackFail_)) callbackFail_(result_.result,result_.message);
 						}
 						
 					},error : function(response_, error_, thrown_){
-						if(!isNull(options_.error)) options_.error(reponse_, error_, thrown_);
+						if(!isNull(callbackError_)) callbackError_(reponse_, error_, thrown_);
 					}
 				});
 			

@@ -102,4 +102,8 @@ public class JGServiceBox{
 	public void redirect(String url_) throws Exception{
 		_response.sendRedirect(url_);
 	}
+	
+	public void sendError(int errorCode_) throws Exception{
+		_response.sendError(errorCode_);
+	}
 }

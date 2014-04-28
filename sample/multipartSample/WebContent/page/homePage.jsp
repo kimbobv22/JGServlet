@@ -11,9 +11,9 @@
 }
 </style>
 <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
-<script type="text/javascript" src="http://kimbobv22.github.io/JGDataset/js/JGDataset.2.0.0.min.js"></script>
-<script type="text/javascript" src="http://kimbobv22.github.io/JGDataset/js/JGDatasetUI.2.0.0.min.js"></script>
-<script type="text/javascript" src="http://kimbobv22.github.io/JGServlet/js/JGService.2.0.0.min.js"></script>
+<script type="text/javascript" src="http://kimbobv22.github.io/JGDataset/js/JGDataset.2.0.1.min.js"></script>
+<script type="text/javascript" src="http://kimbobv22.github.io/JGDataset/js/JGDatasetUI.2.0.1.min.js"></script>
+<script type="text/javascript" src="http://kimbobv22.github.io/JGServlet/js/JGService.2.1.0.min.js"></script>
 <script type="text/javascript">
 JGService.requestURL("main","main");
 function doUpload(){
