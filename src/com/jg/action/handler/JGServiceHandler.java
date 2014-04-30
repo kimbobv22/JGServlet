@@ -29,7 +29,8 @@ public class JGServiceHandler{
 	static public JGServiceHandler sharedHandler() throws Exception{
 		if(_sharedHandler == null){
 			synchronized(JGServiceHandler.class){
-				_sharedHandler = new JGServiceHandler();
+				if(_sharedHandler == null)
+					_sharedHandler = new JGServiceHandler();
 			}
 		}
 		return _sharedHandler;

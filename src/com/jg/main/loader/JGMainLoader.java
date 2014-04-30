@@ -17,7 +17,8 @@ public class JGMainLoader extends HashMap<String, Object>{
 		if(_sharedLoader == null){
 			synchronized(JGMainLoader.class){
 				try{
-					_sharedLoader = new JGMainLoader(servletContext_);
+					if(_sharedLoader == null)
+						_sharedLoader = new JGMainLoader(servletContext_);
 				}catch(Exception ex_){
 					JGLog.error("failed to startup JGServlet",ex_);
 					ex_.printStackTrace();
