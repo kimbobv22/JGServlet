@@ -1,4 +1,4 @@
-(function(window,$){
+(function(window){
 	if($ === undefined){
 		console.error("can't not initialize JGService, JQuery not found");
 		return;
@@ -65,8 +65,18 @@
 		 *@param {String} urlKey_ URL키
 		 *@param {Object} [options_] jQuery AJAX 옵션
 		 **/
-		,ajax : function(urlKey_, options_){
-			var requestURL_ = convertRequestURL(this.requestURL(urlKey_), options_.data);
+		,ajax : function(urlKey_, arg1_, arg2_){
+			var rArguments_,options_;
+			
+			if(arg2_ === undefined){
+				rArguments_ = {};
+				options_ = arg1_;
+			}else{
+				rArguments_ = arg1_;
+				options_ = arg2_;
+			}
+			
+			var requestURL_ = convertRequestURL(this.requestURL(urlKey_, rArguments_), options_.data);
 			options_ = $.extend($.extend({
 				type : "POST"
 				,contentType: "application/x-www-form-urlencoded; charset=UTF-8"
@@ -312,4 +322,4 @@
 	
 	return JGService;
 	
-})(window,$);
+})(window);

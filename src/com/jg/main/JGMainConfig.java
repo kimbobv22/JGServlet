@@ -182,7 +182,6 @@ public class JGMainConfig{
 	public void reload() throws Exception{
 		Element commonElement_ = _configElement.getChild(ELEMENT_COMMON);
 		List<?> dbList_ = _configElement.getChildren(ELEMENT_DATABASE);
-		List<?> customList_ = _configElement.getChild(ELEMENT_CUSTOM).getChildren(ELEMENT_OPTION);
 		
 		try{
 			setDebugLevel(Integer.valueOf(commonElement_.getChild(ELEMENT_KEY_DEBUG_LEVEL).getValue()).intValue());
@@ -217,12 +216,16 @@ public class JGMainConfig{
 			}
 		}
 		
-		Iterator<?> customIterator_ = customList_.iterator();
-		while(customIterator_.hasNext()){
-			Element customElement_ = (Element)customIterator_.next();
-			String name_ = customElement_.getAttributeValue(ATTR_NAME);
-			String value_ = customElement_.getValue();
-			putCustomData(name_, value_);
+		Element customData_ = _configElement.getChild(ELEMENT_CUSTOM);
+		if(customData_ != null){
+			List<?> customList_ = customData_.getChildren(ELEMENT_OPTION);
+			Iterator<?> customIterator_ = customList_.iterator();
+			while(customIterator_.hasNext()){
+				Element customElement_ = (Element)customIterator_.next();
+				String name_ = customElement_.getAttributeValue(ATTR_NAME);
+				String value_ = customElement_.getValue();
+				putCustomData(name_, value_);
+			}
 		}
 	}
 }
