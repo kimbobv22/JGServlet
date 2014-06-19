@@ -1,10 +1,9 @@
 package com.jg.util;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.util.HashMap;
 
 public class JGDrawingUtils {
@@ -34,15 +33,10 @@ public class JGDrawingUtils {
 			height_ = (int)(soruceHeight_ *(((double)width_)/(double)soruceWith_));
 		}
 		
-		double ratioWidth_ = (((double)width_)/(double)soruceWith_);
-		double ratiotHeight_ = (((double)height_)/(double)soruceHeight_);
-		
-		BufferedImage resizedImage_ = new BufferedImage(width_, height_, source_.getType());
+		BufferedImage resizedImage_ = new BufferedImage(width_, height_, BufferedImage.TYPE_INT_RGB);
 		Graphics2D gra2d_ = resizedImage_.createGraphics();
 		gra2d_.setRenderingHints(renderingHints_);
-		AffineTransform xform_ = AffineTransform.getScaleInstance(ratioWidth_, ratiotHeight_);
-		gra2d_.fillRect(0, 0, width_, height_);
-		gra2d_.drawRenderedImage((RenderedImage)source_, xform_);
+		gra2d_.drawImage(source_, 0, 0, width_, height_, Color.WHITE, null);
 		gra2d_.dispose();
 		
 		return resizedImage_;
