@@ -1,4 +1,4 @@
-#JGServlet for JAVA(Version 2.1.0)
+#JGServlet for JAVA(Version 3.0.0)
 ###with JGService for JavaScript
 ###사용하기 전, 반드시 라이센스를 확인하세요
 
@@ -41,8 +41,7 @@
 	// 기본 Servlet
 	JGHttpServlet
 		- JGServletErrorHandlerDef
-		- JGFilterChain
-		- 요청/응답 제어 -> JGActionHandler -(인스턴스호출)-> JGAction
+		- 요청/응답 제어 -> JGServiceHandler -(인스턴스호출)-> JGAction
 	
 	// Context 리스너
 	JGMainServletContextListener -(호출/적재)-> JGMainLoader
@@ -54,7 +53,6 @@
 	// 유틸리티 클래스
 	JGCommonUtils
 	JGDrawUtils
-	JGEncryptionUtil
 	JGFileUtils
 	JGReflectionUtils
 	JGServletUtils
@@ -173,12 +171,6 @@ Servlet Context Listener가 정상적으로 설정되었다면 Context 구동 �
 	Initializing JGServlet...
 	Loading JGMainConfig...
 	Loading JGActionHandler...
-	Loaded service, map name : xxx
-	 - Loaded action classes, total : x
-	 - Loaded result pages, total : x
-	 - Loaded services, total : x
-	 ...
-
 	Loading JGDBXMLQueryManager...
 	Succeed to initialize JGServlet!
 	
@@ -194,20 +186,68 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 	// {serviceXML기본경로}/main/test.xml
 	<services>
 		
-		<service serviceID="service">
+		<service pattern="service">
 		...
 		</service>
 		
 	</services>
 	
 	// 서비스 호출 시
-	http://URL주소/main/test?srvID=service
+	http://URL주소/main/test/service
 
+##디렉토리 가상화
+
+JGServlet은 서비스XML 디렉토리 가상화를 지원합니다.<br>
+<code>_jgvirtual.xml</code>를 정의하여 해당 XML 디렉토리 안에 놓으면 자동으로 디렉토리 가상화를 수행합니다.<br><br>
+
+디렉토리가상화 XML 형식은 아래와 같습니다.<br>
+
+	// {serviceXML기본경로}/main/_jgvirtual.xml
+	<virtualDirectory dataName="가상디렉토리 경로에 대한 데이타명">
+		
+		//접근가능 패턴정의
+		<includes>
+			<pattern>[a-zA-Z]{5,12}</pattern>
+			...
+		</includes>
+		
+		//접근불가 패턴정의
+		<excludes>
+			<pattern>[a-zA-Z]{1,4}</pattern>
+			...
+		</excludes>
+		
+	</virtualDirectory>
+	
+위와 같이 정의한 디렉토리 가상화는 아래와 같이 접근 가능합니다.
+
+	http://URL주소/main/tesets/... //접근가능
+	http://URL주소/main/sdfsdfcsd/... //접근가능
+	http://URL주소/main/tes/... //접근불가
+
+또한 가상디렉토리에 대한 요청경로를 데이타화 할 수 있습니다.
+	
+	// 가상디렉토리 데이타 예제 - 정의
+	<virtualDirectory dataName="vdata1">
+	
+	...
+	
+	</virtualDirectory>
+	
+	// 가상디렉토리 데이타 예제 - url요청
+	http://serverURL/vdatasample
+	
+	// 가상디렉토리 데이타 예제 - 액션에서 핸들링
+	public void testMethod(JGServiceBox serviceBox_) throws Exception{
+		var str_ = serviceBox_.getVirtualDirectoryData("vdata1");
+		System.out.println(str_); // "vdatasample" 출력
+	}
+	
 ###서비스XML 작성방법
 <br>
 ####서비스XML 기본형식
 
-서비스XML파일에서는 __액션클래스, 가상맵, 결과페이지, 서비스, 필터__ 를 정의를 할 수 있습니다.<br>
+서비스XML파일에서는 __액션클래스, 결과페이지, 서비스__ 를 정의를 할 수 있습니다.<br>
 
 	// 액션클래스 정의
 	<actionClasses>
@@ -222,24 +262,11 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 	</resultPages>
 	
 	// 서비스 정의
-	<service serviceID="서비스ID" actionClassName="액션클래스키값" mappingMethod="매핑메소드명" forwardServiceID="포워딩서비스ID" isPrivate="service사유여부">
+	<service pattern="경로패턴" actionClassName="액션클래스키값" mappingMethod="매핑메소드명" forwardPath="포워딩경로" isPrivate="service사유여부">
 		<result code="결과코드" pageName="결과페이지키값"/>
 		...
 	</service>
-	
-	// 필터 정의
-	// 필터는 클라이언트에서 최초 서비스가 요청되었을 때 등록된 모든 필터가 호출됩니다.
-	<filters>
-		<filter serviceID="서비스ID" localFilter="현지필터여부">
-		
-		// localFilter가 true 이면 요청 서비스키와 필터 서비스키의 Map이 같아야 호출됩니다.
-		// false 일 경우에는 Map과 상관없이 무조건 호출됩니다.
-		
-	</filters>
-	
-	// 가상맵(Virtual map)
-	<virtualMap pattern="..." serviceID="..." />
-	<virtualMap pattern="..." serviceID="..." />
+
 	...
 	
 <br>
@@ -259,8 +286,8 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 
 	package com.jg.action.example;
 	
-	import com.jg.action.JGAction;
-	import com.jg.action.handler.JGServiceBox;
+	import com.jg.service.element.JGAction;
+	import com.jg.service.element.JGServiceBox;
 	
 	public class TestAction extends JGAction{
 		...
@@ -278,7 +305,7 @@ JGServlet의 서비스는 서비스XML을 정의하여 사용합니다.<br>
 	</resultPages>
 	
 	// 서비스와 매핑(단순 포워드)
-	<service serviceID="서비스ID">
+	<service pattern="문자패턴">
 		<result pageName="testPage"/>
 	</service>
 <br>
@@ -292,36 +319,47 @@ JGServlet의 모든 Http 요청은 서비스를 통하여 이루어집니다.<br
 #####XML
 
 	// 기본 서비스 정의
-	<service serviceID="서비스ID" actionClassName="액션클래스키값" mappingMethod="매핑메소드명">
+	<service pattern="경로패턴" actionClassName="액션클래스키값" mappingMethod="매핑메소드명">
 		<result code="결과코드" pageName="결과페이지키값"/>
 		<result code="결과코드">결과페이지경로를 직접 입력</result>
-		<result code="결과코드" serviceID="다른 서비스호출"/>
+		<result code="결과코드" forwardPath="포워딩경로"/>
 		...
 	</service>
 	
 	// 서비스 포워딩 정의
-	<service serviceID="서비스ID" forwardServiceID="포워딩서비스ID">
+	<service pattern="경로패턴" forwardPath="포워딩경로">
 		<result code="결과코드" pageName="결과페이지키값"/>
 		<result code="결과코드">결과페이지경로를 직접 입력</result>
-		<result code="결과코드" serviceID="다른 서비스호출"/>
+		<result code="결과코드" forwardPath="포워딩경로"/>
 		...
 	</service>
 	
 	// 결과페이지가 없는 서비스 정의
-	<service serviceID="서비스ID" actionClassName="액션클래스키값" mappingMethod="매핑메소드명" />
+	<service pattern="경로패턴" actionClassName="액션클래스키값" mappingMethod="매핑메소드명" />
 	
 	// 단순 포워드 서비스
-	<service serviceID="서비스ID">
-		<result pageName="결과페이지키값"/>
+	<service pattern="경로패턴">
+		<others pageName="결과페이지키값"/>
 		//OR
-		<result >결과페이지경로를 직접 입력</result>
+		<others>결과페이지경로를 직접 입력</others>
 		//OR
-		<result serviceID="다른 서비스호출"/>
+		<others forwardPath="포워딩경로"/>
+	</service>
+	
+	// 결과값 예외 핸들링
+	<service pattern="경로패턴" forwardPath="포워딩경로">
+		...
+		<others pageName="결과페이지값" />
+		//OR
+		<others>결과페이지경로를 직접 입력</others>
+		//OR
+		<others forwardPath="포워딩경로" />
+		
 	</service>
 	
 	// 서비스는 내부에서만 호출하고 싶을 때
 	// private 속성값이 true일 경우 결과값에 따른 내부호출만 가능합니다.
-	<service serviceID="서비스ID" isPrivate="service사유여부">
+	<service pattern="문자패턴" isPrivate="service사유여부">
 	
 	...
 	
@@ -330,17 +368,17 @@ JGServlet의 모든 Http 요청은 서비스를 통하여 이루어집니다.<br
 또한, 결과페이지 제어 시 간단한 표현식을 제공합니다.
 
 1. 파라미터 매핑 형식 : <code>${파라미터키}</code>
-2. 어트리뷰트 매핑 형식 : <code>#{어트리뷰트키}</code>
+2. 가상디렉토리 데이타 매핑 형식 : <code>$v{가상디렉토리 데이타명}</code>
 		
 표현식 사용예제
 
-	<service serviceID="서비스ID">
+	<service pattern="경로패턴">
 		<result pageName="${parameterKey}"/>
-		<result serviceID="${parameterKey}"/>
-		<result pageName="#{attributeKey}"/>
-		<result serviceID ="#{attributeKey}"/>
+		<result pattern="${parameterKey}"/>
+		<result pageName="$v{virtualDirectoryDataName}"/>
+		<result serviceID ="$v{virtualDirectoryDataName}"/>
 		<result>${parameterKey}</result>
-		<result>#{attributeKey}</result>
+		<result>$v{virtualDirectoryDataName}</result>
 	</service>
 	
 #####액션클래스
@@ -384,18 +422,6 @@ JGAction 상속구현하여 서비스XML에 매핑함으로 비지니스로직�
 <br>
 ####JGAction 상속구현의 기본형식	
 	public class TestAction extends JGAction{
-		
-		// 필수 구현항목 - 액션클래스가 초기화되었을 때 호출됩니다.
-		protected void initAction(JGServiceBox serviceBox_){
-		....
-			
-			// 액션클래스 초기화 시 액션클래스를 세션에 인스턴스화 여부를 선택할 수 있습니다.
-			// 인자값이 true일 경우 사용자 세션에 인스턴스화 합니다.
-			setActionInstantiated();
-			
-			// 인스턴스화 된 액션클래스를 파기하려면 아래 메소드를 호출
-			destoryAction(serviceBox_);
-		}
 		
 		// 이 액션클래스 안에서 예외사항이 발생했을 때 호출됩니다.
 		// 생략이 가능합니다.
@@ -483,7 +509,7 @@ Multipart요청에 관한 정보는 [여기](#javaIndex1-1)를 참고하세요.
 	// 아래와 같이 Multipart 데이타를 해석할 수 있습니다.
 	// 만약 해당 요청이 Multipart형식이 아니라면 Exception이 발생합니다.
 	public int yourLogic(JGServiceBox serviceBox_) throws Exception{
-		JGMultipartData mpData_ = serviceBox_.multipartData();
+		JGMultipartData mpData_ = serviceBox_.getMultipartData();
 		
 		// 업로드된 파일결과상태 확인하기
 		JGMultipartUploadResult result_ = mpData_.getUploadResult(색인);
@@ -492,7 +518,7 @@ Multipart요청에 관한 정보는 [여기](#javaIndex1-1)를 참고하세요.
 		JGUploadProgressStatus status_ = mpData_.getUploadProgressStatus();
 		
 		// 분석된 폼필드(파라미터) 값 가져오기 
-		String value_ = mpData_.getFormFieldValue(key_);
+		String value_ = mpData_.getParameter(key_);
 	}
 
 ####파일다운로드 및 삭제
@@ -528,28 +554,20 @@ JGService는 JavaScript 상에서 <code>JGService</code>로 호출 가능합니�
 ####요청 URL 가져오기
 		
 	//요청 URL 설정
-	JGService.requestURL(키값,URL문자열);
+	JGService.requestURL(키값, URL문자열);
 		
 	//요청 URL 가져오기
 	JGService.requsetURL(키값, JSON형식의 파라미터);
 
 	//예제 1
-	JGService.requestURL("test","http://localhost:8090/test");
+	JGService.requestURL("test","http://localhost:8090/test/{map1}");
 	var requestURL_ = JGService.requsetURL("test", {
-		srvID : "testId"
-		,hello : "world"
+		appendPath : "temp", //요청경로 확장
+		parameters : {hello : "world"}, //GET형식 매개변수
+		mappingData : {map1 : "xyz"} //매핑데이타
 	});
 	// 결과값
-	http://localhost:8090/test?srvID=testId&hello=world
-	
-	//예제 2
-	JGService.requestURL("test1","http://localhost:8090/test/{srvID}");
-	var requestURL_ = JGService.requsetURL("test1", {
-		srvID : "testId"
-		,hello : "world"
-	});
-	// 결과값
-	http://localhost:8090/test/testId?srvID=testId&hello=world
+	http://localhost:8090/test/xyz/temp?hello=world
 	
 <br>	
 ####동기방식으로 서비스 요청하기
@@ -564,14 +582,17 @@ JGService는 JavaScript 상에서 <code>JGService</code>로 호출 가능합니�
 
 JQuery 라이브러리를 이용하여 서비스를 요청합니다.
 
-	JGService.ajax(URL키값, jQueryAJAXJSON옵션);
+	JGService.ajax(URL키값, URL데이타, jQueryAJAXJSON옵션);
 	
 	//예제
 	JGService.ajax("test", {
-		data : {
-			srvID : "testId"
-		}
-		,success : function(result_){
+			appendPath : "temp", //요청경로 확장
+			parameters : {hello : "world"}, //무시됨
+			mappingData : {map1 : "xyz"} //메타데이타
+		},
+		{
+			data : {srvID : "testId"},
+		success : function(result_){
 		
 			...
 			
@@ -586,5 +607,17 @@ JQuery 라이브러리를 이용하여 서비스를 요청합니다.
 <a name="javaScptIndex2"></a>
 ##JGServlet으로 Multipart 요청하기
 
-	JGService.sendMultipart(URL키값, JSON파라미터, 옵션, input태그);
+	JGService.sendMultipart(URL키값, URL데이타 , 옵션, input태그);
+	
+	//예제
+	JGService.sendMultipart("test",{
+		appendPath : "temp", //요청경로 확장
+			parameters : {hello : "world"}, //무시됨
+			mappingData : {map1 : "xyz"} //메타데이타
+	},
+	{
+		multiple : true, // 파일다중선택여부
+		accept : "*.jpg", // 파일허용형식
+		... //jQuery AJAX 옵션
+	});
 	

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<virtualDirectory dataName="sampleVD2">
+
+	<includes>
+		<pattern>[a-zA-Z0-9\-\_]{5,}</pattern>
+	</includes>
+	
+	<excludes>
+		<pattern>admin</pattern>
+		<pattern>user</pattern>
+		<pattern>main</pattern>
+	</excludes>
+
+</virtualDirectory>

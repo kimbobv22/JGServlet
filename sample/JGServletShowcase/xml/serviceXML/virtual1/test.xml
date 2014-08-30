@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serviceMap isPrimary="true">
+
+	<actionClasses>
+		<class name="postAction">sample.action.PostAction</class>
+		<class name="ajaxAction">sample.action.AjaxAction</class>
+		<class name="multipartAction">sample.action.MultipartAction</class>
+		<class name="datasetAction">sample.action.DatasetAction</class>
+	</actionClasses>
+	
+	<!-- post service -->
+	<service pattern="doPost" actionClassName="postAction" mappingMethod="testPost">
+		<result code="0">/page/postResult.jsp</result>
+		<others>/page/postError.jsp</others>
+	</service>
+	
+	<!-- ajax request -->
+	<service pattern="doAjax" actionClassName="ajaxAction" mappingMethod="testAjax" />
+	
+	<!-- multipart request -->
+	<service pattern="doMultipart" actionClassName="multipartAction" mappingMethod="testMultipart" />
+	
+	<!-- dataset sample -->
+	<service pattern="getDataset" actionClassName="datasetAction" mappingMethod="getDataset" />
+	<service pattern="storeDataset" actionClassName="datasetAction" mappingMethod="storeDataset" />
+	
+</serviceMap>

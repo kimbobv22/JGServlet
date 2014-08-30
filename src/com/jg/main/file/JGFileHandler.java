@@ -14,8 +14,8 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import com.jg.action.handler.JGServiceBox;
 import com.jg.main.JGMainConfig;
+import com.jg.service.JGServiceBox;
 import com.jg.util.JGDrawingUtils;
 import com.jg.util.JGFileUtils;
 

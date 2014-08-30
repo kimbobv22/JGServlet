@@ -4,10 +4,10 @@ import java.util.HashMap;
 
 import javax.servlet.ServletContext;
 
-import com.jg.action.handler.JGServiceHandler;
 import com.jg.db.xml.JGDBXMLQueryManager;
 import com.jg.log.JGLog;
 import com.jg.main.JGMainConfig;
+import com.jg.service.JGServiceHandler;
 
 public class JGMainLoader extends HashMap<String, Object>{
 	
@@ -33,15 +33,15 @@ public class JGMainLoader extends HashMap<String, Object>{
 	
 	protected JGMainLoader(ServletContext servletContext_) throws Exception{
 		try{
-			JGLog.log(9,"Initializing JGServlet...");
-			JGLog.log(9,"Loading JGMainConfig...");
+			JGLog.info("Initializing JGServlet...");
+			JGLog.info("Loading JGMainConfig...");
 			JGMainConfig.makeSharedConfig(servletContext_.getRealPath("/WEB-INF"));
 		}catch(Exception ex_){
 			throw new Exception("Failed to load JGMainConfig", ex_);
 		}
 		
 		try{
-			JGLog.log(9,"Loading JGActionHandler...");
+			JGLog.info("Loading JGServiceHandler...");
 			JGServiceHandler.setXMLDirectoryPath(JGMainConfig.sharedConfig().getServicePath());
 			JGServiceHandler.sharedHandler();
 		}catch(Exception ex_){
@@ -49,12 +49,12 @@ public class JGMainLoader extends HashMap<String, Object>{
 		}
 		
 		try{
-			JGLog.log(9,"Loading JGDBXMLQueryManager...");
+			JGLog.info("Loading JGDBXMLQueryManager...");
 			JGDBXMLQueryManager.setXMLDirectoryPath(JGMainConfig.sharedConfig().getQueryPath());
 			JGDBXMLQueryManager.sharedManager();
 		}catch(Exception ex_){
 			throw new Exception("Failed to load JGDBXMLQueryManager...");
 		}
-		JGLog.log(9,"Succeed to initialize JGServlet!");
+		JGLog.info("Succeed to initialize JGServlet!");
 	}
 }

@@ -22,10 +22,10 @@ public class JGMainConfig{
 	static protected final String ATTR_NAME = "name";
 	static protected final String ATTR_ISPRIMARY = "isPrimary";
 	
-	static protected final String ELEMENT_KEY_DEBUG_LEVEL = "debug-level";
 	static protected final String ELEMENT_KEY_CHARACTER_ENCODING = "character-encoding";
 	static protected final String ELEMENT_KEY_DIRPATH_SERVICE = "dirpath-service";
 	static protected final String ELEMENT_KEY_DIRPATH_QUERY = "dirpath-query";
+	static protected final String ELEMENT_KEY_KEY_SEPARATOR = "key-separator";
 	static protected final String ELEMENT_KEY_FILE_ROOT_PATH = "file-root-path";
 	static protected final String ELEMENT_KEY_FILE_REJECT_REGEXP = "file-reject-regexp";
 	static protected final String ELEMENT_KEY_FILE_IMAGE_COMPRESSION = "file-image-compression";
@@ -77,14 +77,6 @@ public class JGMainConfig{
 		return _configElement;
 	}
 	
-	protected int _debugLevel = 0;
-	protected void setDebugLevel(int debugLevel_){
-		_debugLevel = debugLevel_;
-	}
-	public int getDebugLevel(){
-		return _debugLevel;
-	}
-	
 	protected String _characterEncoding = "UTF-8";
 	protected void setCharacterEncoding(String characterEncoding_){
 		_characterEncoding = characterEncoding_;
@@ -107,6 +99,14 @@ public class JGMainConfig{
 	}
 	public String getQueryPath(){
 		return _queryPath;
+	}
+	
+	protected boolean _useRootMap = false;
+	protected void setUseRootMap(boolean useRootMap_){
+		_useRootMap = useRootMap_;
+	}
+	public boolean useRootMap(){
+		return _useRootMap;
 	}
 	
 	protected String _fileRootPath = null;
@@ -137,6 +137,11 @@ public class JGMainConfig{
 	}
 	public String getFileImageCompressionRegexp(){
 		return _fileImageCompressionRegexp;
+	}
+	
+	protected String _keySeparator = "/";
+	public String getKeySeparator(){
+		return _keySeparator;
 	}
 	
 	protected HashMap<String, JGDBConfig> _dBConfigMap = new HashMap<String, JGDBConfig>();
@@ -183,12 +188,6 @@ public class JGMainConfig{
 		Element commonElement_ = _configElement.getChild(ELEMENT_COMMON);
 		List<?> dbList_ = _configElement.getChildren(ELEMENT_DATABASE);
 		
-		try{
-			setDebugLevel(Integer.valueOf(commonElement_.getChild(ELEMENT_KEY_DEBUG_LEVEL).getValue()).intValue());
-		}catch(Exception ex_){
-			setDebugLevel(9);
-		}
-		
 		_characterEncoding = commonElement_.getChild(ELEMENT_KEY_CHARACTER_ENCODING).getValue();
 		_servicePath = _configPath+"/"+commonElement_.getChild(ELEMENT_KEY_DIRPATH_SERVICE).getValue();
 		_queryPath = _configPath+"/"+commonElement_.getChild(ELEMENT_KEY_DIRPATH_QUERY).getValue();
@@ -196,6 +195,10 @@ public class JGMainConfig{
 		_fileRejectRegexp = commonElement_.getChild(ELEMENT_KEY_FILE_REJECT_REGEXP).getValue();
 		_fileImageCompression = JGStringUtils.getBoolean(commonElement_.getChild(ELEMENT_KEY_FILE_IMAGE_COMPRESSION).getValue(), true);
 		_fileImageCompressionRegexp = commonElement_.getChild(ELEMENT_KEY_FILE_IMAGE_COMPRESSION_REGEXP).getValue();
+		
+		Element keySparator_ = commonElement_.getChild(ELEMENT_KEY_KEY_SEPARATOR);
+		if(keySparator_ != null)
+			_keySeparator = keySparator_.getValue();
 		
 		Iterator<?> dbIterator_ = dbList_.iterator();
 		while(dbIterator_.hasNext()){

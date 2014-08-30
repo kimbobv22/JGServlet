@@ -7,13 +7,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.jg.action.handler.JGServiceBox;
-import com.jg.action.handler.JGServiceHandler;
-import com.jg.action.handler.JGServiceKey;
-import com.jg.action.handler.JGServiceNotFoundException;
-import com.jg.filter.JGFilterChain;
-import com.jg.log.JGLog;
 import com.jg.main.loader.JGMainLoader;
+import com.jg.service.JGServiceBox;
+import com.jg.service.JGServiceHandler;
+import com.jg.service.exception.JGActionProcessException;
+import com.jg.service.exception.JGDirectoryNotFoundException;
+import com.jg.service.exception.JGInvalidServiceException;
+import com.jg.service.exception.JGRequestDeniedException;
+import com.jg.service.exception.JGResultNotDefinedException;
+import com.jg.service.exception.JGResultNotFoundException;
+import com.jg.service.exception.JGResultPageNotFoundException;
+import com.jg.service.exception.JGServiceNotFoundException;
 
 public abstract class JGHttpServlet extends HttpServlet{
 	
@@ -28,11 +32,6 @@ public abstract class JGHttpServlet extends HttpServlet{
 		_errorHandler = errorHandler_;
 	}
 	
-	protected JGFilterChain<JGHttpServlet,JGServiceBox> _filterChain = new JGFilterChain<JGHttpServlet,JGServiceBox>(this);
-	protected JGFilterChain<JGHttpServlet,JGServiceBox> getFilterChain(){
-		return _filterChain;
-	}
-	
 	private boolean _checkMainLoader() throws ServletException{
 		boolean result_ = JGMainLoader.didStartup();
 		
@@ -42,68 +41,66 @@ public abstract class JGHttpServlet extends HttpServlet{
 		return result_;
 	}
 	
-	@Override
-	protected final void doGet(HttpServletRequest request_, HttpServletResponse response_) throws ServletException, IOException {
+	private void doProcess(HttpServletRequest request_, HttpServletResponse response_) throws ServletException, IOException{
 		_checkMainLoader();
+		JGServiceBox serviceBox_ = null;
 		
 		try{
-			JGServiceBox serviceBox_ = _createServiceBox(request_, response_);
-			
-			if(!acceptRequest(serviceBox_)){
-				getErrorHandler().didRejectRequest(request_, response_);
-			}else{
-				handleGet(serviceBox_);
-			}
+			serviceBox_ = new JGServiceBox(request_, response_);
 		}catch(Exception ex_){
-			JGLog.error(ex_.getLocalizedMessage(),ex_);
-			getErrorHandler().didRaiseError(ex_, request_, response_);
+			getErrorHandler().requestFailed(request_, response_, ex_);
+			return;
 		}
+		
+		try{
+			JGServiceHandler.sharedHandler().handleService(serviceBox_, serviceBox_.getRequestPath());
+		}catch(JGDirectoryNotFoundException ex_){
+			getErrorHandler().directoryNotFound(serviceBox_, ex_.getPath());
+		}catch(JGRequestDeniedException ex_){
+			getErrorHandler().requestDenied(serviceBox_, ex_.getPath(), ex_.getService());
+		}catch(JGResultNotFoundException ex_){
+			getErrorHandler().resultNotFound(serviceBox_, ex_.getPath(), ex_.getReceivedResultCode());
+		}catch(JGResultNotDefinedException ex_){
+			getErrorHandler().resultNotDefined(serviceBox_, ex_.getPath(), ex_.getReceivedResultCode());
+		}catch(JGResultPageNotFoundException ex_){
+			getErrorHandler().resultPageNotFound(serviceBox_, ex_.getPath(), ex_.getReceivedResultCode(), ex_.getPageName());
+		}catch(JGServiceNotFoundException ex_){
+			getErrorHandler().serviceNotFound(serviceBox_, ex_.getPath());
+		}catch(JGActionProcessException ex_){
+			getErrorHandler().actionErrorOccurred(serviceBox_, ex_.getPath(), ex_.getActionClassName(), ex_.getMappingMethod(), ex_.getCause());
+		}catch(JGInvalidServiceException ex_){
+			getErrorHandler().invalidService(serviceBox_, ex_.getPath(), ex_.getActionClassName(), ex_.getMappingMethod(), ex_.getForwardPath());
+		}catch(Exception ex_){
+			getErrorHandler().unknownErrorOccurred(serviceBox_, serviceBox_.getRequestPath(), ex_);
+		}
+	}
+	
+	@Override
+	protected void doDelete(HttpServletRequest request_, HttpServletResponse response_) throws ServletException, IOException{
+		doProcess(request_, response_);
+	}
+	@Override
+	protected void doPut(HttpServletRequest request_, HttpServletResponse response_) throws ServletException, IOException{
+		doProcess(request_, response_);
+	}
+	@Override
+	protected void doHead(HttpServletRequest request_, HttpServletResponse response_) throws ServletException, IOException{
+		doProcess(request_, response_);
+	}
+	@Override
+	protected void doTrace(HttpServletRequest request_, HttpServletResponse response_) throws ServletException, IOException{
+		doProcess(request_, response_);
+	}
+	@Override
+	protected void doOptions(HttpServletRequest request_, HttpServletResponse response_) throws ServletException, IOException{
+		doProcess(request_, response_);
+	}
+	@Override
+	protected final void doGet(HttpServletRequest request_, HttpServletResponse response_) throws ServletException, IOException {
+		doProcess(request_, response_);
 	}
 	@Override
 	protected final void doPost(HttpServletRequest request_, HttpServletResponse response_) throws ServletException, IOException{
-		_checkMainLoader(); 
-		
-		try{
-			JGServiceBox serviceBox_ = _createServiceBox(request_, response_);
-			
-			if(!acceptRequest(serviceBox_)){
-				getErrorHandler().didRejectRequest(request_, response_);
-			}else{
-				handlePost(serviceBox_);
-			}
-		}catch(Exception ex_){
-			JGLog.error(ex_.getLocalizedMessage(),ex_);
-			getErrorHandler().didRaiseError(ex_, request_, response_);
-		}
+		doProcess(request_, response_);
 	}
-	
-	private final JGServiceBox _createServiceBox(HttpServletRequest request_, HttpServletResponse response_) throws Exception{
-		try{
-			JGServiceBox serviceBox_ = new JGServiceBox(request_, response_);
-			_filterChain.doFilter(serviceBox_);
-			
-			return serviceBox_;
-		}catch(Exception ex_){
-			throw new Exception("can't create service box",ex_);
-		}
-	}
-	
-	protected final void handleGet(JGServiceBox serviceBox_) throws Exception{
-		_doProcess(serviceBox_);
-	};
-	
-	protected final void handlePost(JGServiceBox serviceBox_)throws Exception{
-		_doProcess(serviceBox_);
-	}
-	
-	private void _doProcess(JGServiceBox serviceBox_) throws Exception{
-		try{
-			JGServiceKey serviceKey_ = serviceBox_.getRequestServiceKey();
-			JGServiceHandler.sharedHandler().handleService(serviceBox_, serviceKey_, true, false, true);
-		}catch(JGServiceNotFoundException nex_){
-			_errorHandler.serviceNotFound(nex_.getServiceKey(), serviceBox_.getRequest(), serviceBox_.getResponse());
-		}
-	}
-	
-	protected boolean acceptRequest(JGServiceBox serviceBox_) throws ServletException, IOException{return true;}
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serviceMap isPrimary="true">
+
+	<actionClasses>
+		<class name="basicAction">sample.action.BasicAction</class>
+	</actionClasses>
+	
+	<!-- basic definition of service  -->
+	<service pattern="home" isPrimary="true" actionClassName="basicAction" mappingMethod="testMethod">
+		<others>/page/homePage.jsp</others>
+	</service>
+	
+	<!-- a Example for simple forwarding -->
+	<service pattern="bridge" forwardPath="./home">
+		<result code="0" forwardPath="./home"/>
+	</service>
+	
+</serviceMap>

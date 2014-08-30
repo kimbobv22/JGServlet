@@ -2,22 +2,13 @@
     "project": {
         "name": "JGService for JGServlet",
         "description": "JGServlet 연동을 위한 JavaScript 라이브러리입니다.",
-<<<<<<< HEAD
-        "version": "2.1.0",
-=======
-        "version": "2.0.0",
->>>>>>> gh-pages
+        "version": "3.0.0",
         "url": "https://github.com/kimbobv22/JGServlet",
         "logo": "../../logo-small.png"
     },
     "files": {
-<<<<<<< HEAD
-        "JGService.2.1.0.js": {
-            "name": "JGService.2.1.0.js",
-=======
-        "JGService.2.0.0.js": {
-            "name": "JGService.2.0.0.js",
->>>>>>> gh-pages
+        "JGService.3.0.0.js": {
+            "name": "JGService.3.0.0.js",
             "modules": {},
             "classes": {
                 "JGService": 1
@@ -36,41 +27,15 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-<<<<<<< HEAD
-            "file": "JGService.2.1.0.js",
-            "line": 25,
-=======
-            "file": "JGService.2.0.0.js",
-            "line": 11,
->>>>>>> gh-pages
-            "description": "JGServlet과 통신을 돕기 위한 라이브러리"
+            "file": "JGService.3.0.0.js",
+            "line": 12,
+            "description": "JGServlet 연동을 위한 JavaScript 라이브러리입니다."
         }
     },
     "classitems": [
         {
-<<<<<<< HEAD
-            "file": "JGService.2.1.0.js",
-            "line": 31,
-=======
-            "file": "JGService.2.0.0.js",
-            "line": 17,
->>>>>>> gh-pages
-            "description": "요청URL을 적재하는 변수입니다.",
-            "itemtype": "property",
-            "name": "_requestURLs",
-            "type": "Object",
-            "access": "protected",
-            "tagname": "",
-            "class": "JGService"
-        },
-        {
-<<<<<<< HEAD
-            "file": "JGService.2.1.0.js",
-            "line": 39,
-=======
-            "file": "JGService.2.0.0.js",
-            "line": 25,
->>>>>>> gh-pages
+            "file": "JGService.3.0.0.js",
+            "line": 20,
             "description": "요청URL을 설정/반환합니다.<br>\n1. 두번째 매개변수가 객체일 경우, 매개변수와 함께 GET방식의 URL로 반환합니다.<br>\n2. 두번째 매개변수가 문자열일 경우 해당 문자열을 요청URL로 설정합니다.",
             "itemtype": "method",
             "name": "requestURL",
@@ -91,42 +56,44 @@
                 "description": "요청URL",
                 "type": "String"
             },
+            "example": [
+                "\n\t//요청 URL 설정하기\n\tJGService.requestURL(\"key\", \"http://localhost/context/{mData1}\");\n\t\n\t//요청 URL 반환하기(매개변수 형식)\n\tvar requestURL_ = JGService.requestURL(\"key\",{\n\t\tappendPath : \"sample\", //경로확장\n\t\tparameters : {param1 : \"abc\"}, //GET파리미터\n\t\tmappingData : {mData1 : \"xyz\"} //매핑데이터\n\t});\n\t//결과값\n\t// http://localhost/context/xyz/sample?param1=abc"
+            ],
             "class": "JGService"
         },
         {
-<<<<<<< HEAD
-            "file": "JGService.2.1.0.js",
-            "line": 60,
-=======
-            "file": "JGService.2.0.0.js",
-            "line": 47,
->>>>>>> gh-pages
+            "file": "JGService.3.0.0.js",
+            "line": 94,
             "description": "요청URL과 함게 비동기 호출을 수행합니다.<br>\n옵션은 jQuery AJAX 옵션형식을 따릅니다.",
             "itemtype": "method",
             "name": "ajax",
             "params": [
                 {
-                    "name": "urlKey_",
+                    "name": "requestURLKey_",
                     "description": "URL키",
                     "type": "String"
                 },
                 {
-                    "name": "options_",
+                    "name": "urlData_",
+                    "description": "JSON형식의 매개변수",
+                    "type": "Object",
+                    "optional": true
+                },
+                {
+                    "name": "ajaxOptions_",
                     "description": "jQuery AJAX 옵션",
                     "type": "Object",
                     "optional": true
                 }
             ],
+            "example": [
+                "\n\tJGService.ajax(\"main\",{\n\t\tappendPath : \"samplePath\",\n\t\tparameters : {}, // 이 항목은 무시됩니다.\n\t\tmappingData : {}\n\t},{\n\t\t// jQuery AJAX Options\n\t});"
+            ],
             "class": "JGService"
         },
         {
-<<<<<<< HEAD
-            "file": "JGService.2.1.0.js",
-            "line": 79,
-=======
-            "file": "JGService.2.0.0.js",
-            "line": 65,
->>>>>>> gh-pages
+            "file": "JGService.3.0.0.js",
+            "line": 134,
             "description": "요청URL로 매개변수와 함께 POST를 요청합니다.",
             "itemtype": "method",
             "name": "postService",
@@ -137,22 +104,20 @@
                     "type": "String"
                 },
                 {
-                    "name": "parameters_",
+                    "name": "urlData_",
                     "description": "JSON형식의 매개변수",
                     "type": "Object",
                     "optional": true
                 }
             ],
+            "example": [
+                "\n\tJGService.postService(\"main\",{\n\t\tappendPath : \"samplePath\",\n\t\tparameters : {},\n\t\tmappingData : {}\n\t});"
+            ],
             "class": "JGService"
         },
         {
-<<<<<<< HEAD
-            "file": "JGService.2.1.0.js",
-            "line": 102,
-=======
-            "file": "JGService.2.0.0.js",
-            "line": 88,
->>>>>>> gh-pages
+            "file": "JGService.3.0.0.js",
+            "line": 166,
             "description": "요청URL로 매개변수와 함께 전송합니다.",
             "itemtype": "method",
             "name": "forwardService",
@@ -163,22 +128,20 @@
                     "type": "String"
                 },
                 {
-                    "name": "parameters_",
+                    "name": "urlData_",
                     "description": "JSON형식의 매개변수",
                     "type": "Object",
                     "optional": true
                 }
             ],
+            "example": [
+                "\n\tJGService.forwardService(\"main\",{\n\t\tappendPath : \"samplePath\",\n\t\tparameters : {},\n\t\tmappingData : {}\n\t});"
+            ],
             "class": "JGService"
         },
         {
-<<<<<<< HEAD
-            "file": "JGService.2.1.0.js",
-            "line": 112,
-=======
-            "file": "JGService.2.0.0.js",
-            "line": 98,
->>>>>>> gh-pages
+            "file": "JGService.3.0.0.js",
+            "line": 182,
             "description": "파일선택창을 호출합니다. 파일 선택 시, 콜백함수를 통해서 input요소를 반환합니다.\n\n\t//옵션항목\t\n\t{\n\t\tmultiple : \"파일다중선택여부\"\n\t\t,accept : \"허용파일항목\"\n\t};",
             "itemtype": "method",
             "name": "getFile",
@@ -202,14 +165,9 @@
             "class": "JGService"
         },
         {
-<<<<<<< HEAD
-            "file": "JGService.2.1.0.js",
-            "line": 146,
-=======
-            "file": "JGService.2.0.0.js",
-            "line": 132,
->>>>>>> gh-pages
-            "description": "요청URL로 매개변수와 함께 Multi-part 요청을 수행합니다.<br>\ninputFile_ 매개변수가 존재하지 않을 경우 파일선택창을 호출하여 요청을 진행합니다.\n\n\t//옵션항목\n\t{\n\t\tasync : \"비동기여부\"\n\t\t,multiple : \"파일다중선택여부\"\n\t\t,accept : \"허용파일항목\"\n\t\t,success : \"요청 성공시 콜백함수\"\n\t\t,fail : \"요청 실패시 콜백함수\"\n\t\t,error : \"에러 발생시 콜백함수\"\n\t};",
+            "file": "JGService.3.0.0.js",
+            "line": 216,
+            "description": "요청URL로 매개변수와 함께 Multi-part 요청을 수행합니다.<br>\ninputFile_ 매개변수가 존재하지 않을 경우 파일선택창을 호출하여 요청을 진행합니다.\n\n옵션항목은 jQuery AJAX Options가 동일하며 기타 옵션은 아래와 같습니다.\n\t//기타옵션항목 \n\t{\n\t\t,multiple : \"파일다중선택여부\"\n\t\t,accept : \"허용파일항목\"\n\t};",
             "itemtype": "method",
             "name": "sendMultipart",
             "params": [
@@ -219,14 +177,14 @@
                     "type": "String"
                 },
                 {
-                    "name": "parameters_",
-                    "description": "URL매개변수",
+                    "name": "urlData_",
+                    "description": "JSON형식의 매개변수",
                     "type": "Object",
                     "optional": true
                 },
                 {
-                    "name": "options_",
-                    "description": "옵션",
+                    "name": "ajaxOptions_",
+                    "description": "jQuery AJAX 옵션",
                     "type": "Object",
                     "optional": true
                 },
@@ -240,13 +198,8 @@
             "class": "JGService"
         },
         {
-<<<<<<< HEAD
-            "file": "JGService.2.1.0.js",
-            "line": 224,
-=======
-            "file": "JGService.2.0.0.js",
-            "line": 205,
->>>>>>> gh-pages
+            "file": "JGService.3.0.0.js",
+            "line": 284,
             "description": "쿠키를 설정/반환합니다.<br>\n첫번째 매개변수만 있을 경우 반환, 아닐 경우 설정합니다.",
             "itemtype": "method",
             "name": "cookie",
@@ -274,13 +227,8 @@
             "class": "JGService"
         },
         {
-<<<<<<< HEAD
-            "file": "JGService.2.1.0.js",
-            "line": 257,
-=======
-            "file": "JGService.2.0.0.js",
-            "line": 238,
->>>>>>> gh-pages
+            "file": "JGService.3.0.0.js",
+            "line": 324,
             "description": "쿠키를 삭제합니다.",
             "itemtype": "method",
             "name": "removeCookie",
@@ -291,31 +239,6 @@
                     "type": "String"
                 }
             ],
-            "class": "JGService"
-        },
-        {
-<<<<<<< HEAD
-            "file": "JGService.2.1.0.js",
-            "line": 280,
-=======
-            "file": "JGService.2.0.0.js",
-            "line": 261,
->>>>>>> gh-pages
-            "description": "모바일여부를 검증합니다.\n\n\t//검증가능 플렛폼\n\t{\n\t\tandroid : \"안드로이드\"\n\t\t,blackberry : \"블랙베리\"\n\t\t,ios : \"iOS\"\n\t\t,opera : \"오페라\"\n\t\t,windows : \"윈도우즈\"\n\t\t,any : \"모든 모바일기기\"\n\t};",
-            "itemtype": "method",
-            "name": "removeCookie",
-            "params": [
-                {
-                    "name": "platform_",
-                    "description": "플렛폼",
-                    "type": "String",
-                    "optional": true
-                }
-            ],
-            "return": {
-                "description": "검증여부",
-                "type": "Boolean"
-            },
             "class": "JGService"
         }
     ],

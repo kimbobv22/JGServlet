@@ -2,6 +2,8 @@ package com.jg.util;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.jg.main.JGMainConfig;
+
 public class JGServletUtils{
 	
 	static public String getServerURL(HttpServletRequest request_) throws Exception{
@@ -34,5 +36,19 @@ public class JGServletUtils{
 	
 	static public boolean isAJAXRequest(HttpServletRequest request_){
 		return "XMLHttpRequest".equals(request_.getHeader("X-Requested-With"));
+	}
+	
+	static public String parseServicePath(HttpServletRequest request_){
+		String servletPath_ = request_.getServletPath();
+		
+		if(servletPath_.length() == 0){
+			servletPath_ = null;
+		}else{
+			int lastIndex_ = servletPath_.lastIndexOf(JGMainConfig.sharedConfig().getKeySeparator());
+			if(lastIndex_+1 == servletPath_.length())
+				servletPath_ = servletPath_.substring(0,lastIndex_);
+		}
+		
+		return servletPath_;
 	}
 }
