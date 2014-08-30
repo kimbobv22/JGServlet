@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 2.0.0</em>
+            <em>API Docs for: 3.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -89,6 +89,10 @@
     
 
     
+        <div class="foundat">
+            Defined in: <a href="../files/JGService.3.0.0.js.html#l12"><code>JGService.3.0.0.js:12</code></a>
+        </div>
+    
 
     
 
@@ -98,7 +102,7 @@
 
 
 <div class="box intro">
-    <p>JGServlet과 통신을 돕기 위한 라이브러리</p>
+    <p>JGServlet 연동을 위한 JavaScript 라이브러리입니다.</p>
 
 </div>
 
@@ -111,8 +115,6 @@
         
             <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
         
-        
-            <li class="api-class-tab properties"><a href="#properties">Properties</a></li>
         
         
         
@@ -171,13 +173,6 @@
                             </li>
                         
                             <li class="index-item method">
-                                <a href="#method_removeCookie">removeCookie</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item method">
                                 <a href="#method_requestURL">requestURL</a>
 
                                 
@@ -195,21 +190,6 @@
                 </div>
             
 
-            
-                <div class="index-section properties">
-                    <h3>Properties</h3>
-
-                    <ul class="index-list properties">
-                        
-                            <li class="index-item property protected">
-                                <a href="#property__requestURLs">_requestURLs</a>
-
-                                
-                                
-                            </li>
-                        
-                    </ul>
-                </div>
             
 
             
@@ -231,13 +211,19 @@
             
                 <li class="arg">
                     
-                        <code>urlKey_</code>
+                        <code>requestURLKey_</code>
                     
                 </li>
             
                 <li class="arg">
                     
-                        <code class="optional">[options_]</code>
+                        <code class="optional">[urlData_]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[ajaxOptions_]</code>
                     
                 </li>
             
@@ -265,8 +251,12 @@
                 
                 <p>
                 
+                Defined in
+                
             
         
+        
+        <a href="../files/JGService.3.0.0.js.html#l94"><code>JGService.3.0.0.js:94</code></a>
         
         </p>
 
@@ -290,7 +280,7 @@
             
                 <li class="param">
                     
-                        <code class="param-name">urlKey_</code>
+                        <code class="param-name">requestURLKey_</code>
                         <span class="type">String</span>
                     
 
@@ -306,7 +296,24 @@
             
                 <li class="param">
                     
-                        <code class="param-name optional">[options_]</code>
+                        <code class="param-name optional">[urlData_]</code>
+                        <span class="type">Object</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>JSON형식의 매개변수</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[ajaxOptions_]</code>
                         <span class="type">Object</span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -327,6 +334,21 @@
 
     
 
+    
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <pre class="code prettyprint"><code>JGService.ajax(&quot;main&quot;,{
+    appendPath : &quot;samplePath&quot;,
+    parameters : {}, // 이 항목은 무시됩니다.
+    mappingData : {}
+},{
+    // jQuery AJAX Options
+});</code></pre>
+
+            </div>
+        </div>
     
 </div>
 
@@ -384,8 +406,12 @@
                 
                 <p>
                 
+                Defined in
+                
             
         
+        
+        <a href="../files/JGService.3.0.0.js.html#l284"><code>JGService.3.0.0.js:284</code></a>
         
         </p>
 
@@ -494,7 +520,7 @@
             
                 <li class="arg">
                     
-                        <code class="optional">[parameters_]</code>
+                        <code class="optional">[urlData_]</code>
                     
                 </li>
             
@@ -522,8 +548,12 @@
                 
                 <p>
                 
+                Defined in
+                
             
         
+        
+        <a href="../files/JGService.3.0.0.js.html#l166"><code>JGService.3.0.0.js:166</code></a>
         
         </p>
 
@@ -562,7 +592,7 @@
             
                 <li class="param">
                     
-                        <code class="param-name optional">[parameters_]</code>
+                        <code class="param-name optional">[urlData_]</code>
                         <span class="type">Object</span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -583,6 +613,19 @@
 
     
 
+    
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <pre class="code prettyprint"><code>JGService.forwardService(&quot;main&quot;,{
+    appendPath : &quot;samplePath&quot;,
+    parameters : {},
+    mappingData : {}
+});</code></pre>
+
+            </div>
+        </div>
     
 </div>
 
@@ -634,8 +677,12 @@
                 
                 <p>
                 
+                Defined in
+                
             
         
+        
+        <a href="../files/JGService.3.0.0.js.html#l182"><code>JGService.3.0.0.js:182</code></a>
         
         </p>
 
@@ -733,7 +780,7 @@
             
                 <li class="arg">
                     
-                        <code class="optional">[parameters_]</code>
+                        <code class="optional">[urlData_]</code>
                     
                 </li>
             
@@ -761,8 +808,12 @@
                 
                 <p>
                 
+                Defined in
+                
             
         
+        
+        <a href="../files/JGService.3.0.0.js.html#l134"><code>JGService.3.0.0.js:134</code></a>
         
         </p>
 
@@ -801,7 +852,7 @@
             
                 <li class="param">
                     
-                        <code class="param-name optional">[parameters_]</code>
+                        <code class="param-name optional">[urlData_]</code>
                         <span class="type">Object</span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -822,6 +873,19 @@
 
     
 
+    
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <pre class="code prettyprint"><code>JGService.postService(&quot;main&quot;,{
+    appendPath : &quot;samplePath&quot;,
+    parameters : {},
+    mappingData : {}
+});</code></pre>
+
+            </div>
+        </div>
     
 </div>
 
@@ -863,8 +927,12 @@
                 
                 <p>
                 
+                Defined in
+                
             
         
+        
+        <a href="../files/JGService.3.0.0.js.html#l324"><code>JGService.3.0.0.js:324</code></a>
         
         </p>
 
@@ -905,119 +973,6 @@
         </div>
     
 
-    
-
-    
-</div>
-
-                
-                    <div id="method_removeCookie" class="method item">
-    <h3 class="name"><code>removeCookie</code></h3>
-
-    
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code class="optional">[platform_]</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
-    
-
-    
-        <span class="returns-inline">
-            <span class="type">Boolean</span>
-        </span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>모바일여부를 검증합니다.</p>
-<pre class="code prettyprint"><code>//검증가능 플렛폼
-{
-    android : &quot;안드로이드&quot;
-    ,blackberry : &quot;블랙베리&quot;
-    ,ios : &quot;iOS&quot;
-    ,opera : &quot;오페라&quot;
-    ,windows : &quot;윈도우즈&quot;
-    ,any : &quot;모든 모바일기기&quot;
-};</code></pre>
-
-    </div>
-
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[platform_]</code>
-                        <span class="type">String</span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>플렛폼</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
-    
-
-    
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                
-                    
-                        <span class="type">Boolean</span>:
-                    
-                    <p>검증여부</p>
-
-                
-            </div>
-        </div>
     
 
     
@@ -1071,8 +1026,12 @@
                 
                 <p>
                 
+                Defined in
+                
             
         
+        
+        <a href="../files/JGService.3.0.0.js.html#l20"><code>JGService.3.0.0.js:20</code></a>
         
         </p>
 
@@ -1151,6 +1110,25 @@
     
 
     
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <pre class="code prettyprint"><code>//요청 URL 설정하기
+JGService.requestURL(&quot;key&quot;, &quot;http://localhost/context/{mData1}&quot;);
+
+//요청 URL 반환하기(매개변수 형식)
+var requestURL_ = JGService.requestURL(&quot;key&quot;,{
+    appendPath : &quot;sample&quot;, //경로확장
+    parameters : {param1 : &quot;abc&quot;}, //GET파리미터
+    mappingData : {mData1 : &quot;xyz&quot;} //매핑데이터
+});
+//결과값
+// http://localhost/context/xyz/sample?param1=abc</code></pre>
+
+            </div>
+        </div>
+    
 </div>
 
                 
@@ -1169,13 +1147,13 @@
             
                 <li class="arg">
                     
-                        <code class="optional">[parameters_]</code>
+                        <code class="optional">[urlData_]</code>
                     
                 </li>
             
                 <li class="arg">
                     
-                        <code class="optional">[options_]</code>
+                        <code class="optional">[ajaxOptions_]</code>
                     
                 </li>
             
@@ -1209,8 +1187,12 @@
                 
                 <p>
                 
+                Defined in
+                
             
         
+        
+        <a href="../files/JGService.3.0.0.js.html#l216"><code>JGService.3.0.0.js:216</code></a>
         
         </p>
 
@@ -1223,15 +1205,12 @@
     <div class="description">
         <p>요청URL로 매개변수와 함께 Multi-part 요청을 수행합니다.<br>
 inputFile_ 매개변수가 존재하지 않을 경우 파일선택창을 호출하여 요청을 진행합니다.</p>
-<pre class="code prettyprint"><code>//옵션항목
-{
-    async : &quot;비동기여부&quot;
-    ,multiple : &quot;파일다중선택여부&quot;
-    ,accept : &quot;허용파일항목&quot;
-    ,success : &quot;요청 성공시 콜백함수&quot;
-    ,fail : &quot;요청 실패시 콜백함수&quot;
-    ,error : &quot;에러 발생시 콜백함수&quot;
-};</code></pre>
+<p>옵션항목은 jQuery AJAX Options가 동일하며 기타 옵션은 아래와 같습니다.
+    //기타옵션항목 
+    {
+        ,multiple : &quot;파일다중선택여부&quot;
+        ,accept : &quot;허용파일항목&quot;
+    };</p>
 
     </div>
 
@@ -1259,7 +1238,7 @@ inputFile_ 매개변수가 존재하지 않을 경우 파일선택창을 호출�
             
                 <li class="param">
                     
-                        <code class="param-name optional">[parameters_]</code>
+                        <code class="param-name optional">[urlData_]</code>
                         <span class="type">Object</span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -1267,7 +1246,7 @@ inputFile_ 매개변수가 존재하지 않을 경우 파일선택창을 호출�
                     
 
                     <div class="param-description">
-                        <p>URL매개변수</p>
+                        <p>JSON형식의 매개변수</p>
 
                     </div>
 
@@ -1276,7 +1255,7 @@ inputFile_ 매개변수가 존재하지 않을 경우 파일선택창을 호출�
             
                 <li class="param">
                     
-                        <code class="param-name optional">[options_]</code>
+                        <code class="param-name optional">[ajaxOptions_]</code>
                         <span class="type">Object</span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -1284,7 +1263,7 @@ inputFile_ 매개변수가 존재하지 않을 경우 파일선택창을 호출�
                     
 
                     <div class="param-description">
-                        <p>옵션</p>
+                        <p>jQuery AJAX 옵션</p>
 
                     </div>
 
@@ -1321,55 +1300,6 @@ inputFile_ 매개변수가 존재하지 않을 경우 파일선택창을 호출�
             </div>
         
 
-        
-            <div id="properties" class="api-class-tabpanel">
-                <h2 class="off-left">Properties</h2>
-
-                
-                    <div id="property__requestURLs" class="property item protected">
-    <h3 class="name"><code>_requestURLs</code></h3>
-    <span class="type">Object</span>
-
-    
-
-    
-        <span class="flag protected">protected</span>
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>요청URL을 적재하는 변수입니다.</p>
-
-    </div>
-
-    
-
-    
-
-    
-</div>
-
-                
-            </div>
         
 
         
