@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-bin/
-=======
 bin/com/jg/action/handler/JGMultipartData.class
 bin/com/jg/action/handler/JGMultipartDefaultUploadHandler.class
 bin/com/jg/action/handler/JGMultipartUploadHandlerDef.class
@@ -195,4 +192,6 @@ bin/doc/javaScript/files/index.html
 bin/doc/javaScript/modules/index.html
 bin/js/JGService.2.0.0.min.js
 bin/js/JGService.2.1.0.min.js
->>>>>>> gh-pages
+/.gitignore
+/sample
+/js
