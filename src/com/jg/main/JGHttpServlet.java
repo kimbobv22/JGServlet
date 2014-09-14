@@ -53,7 +53,7 @@ public abstract class JGHttpServlet extends HttpServlet{
 		}
 		
 		try{
-			JGServiceHandler.sharedHandler().handleService(serviceBox_, serviceBox_.getRequestPath());
+			JGServiceHandler.sharedHandler().handleService(serviceBox_, JGMainConfig.sharedConfig().getKeySeparator(), serviceBox_.getRequestPath());
 		}catch(JGDirectoryNotFoundException ex_){
 			getErrorHandler().directoryNotFound(serviceBox_, ex_.getPath());
 		}catch(JGRequestDeniedException ex_){

@@ -78,18 +78,12 @@ public class JGVirtualDirectory extends JGDirectory{
 		super(null, JGDirectoryType.Virtual);
 	}
 	
-	public static JGVirtualDirectory make(File file_) throws Exception{
-		if(file_ == null || !file_.isFile())
-			throw new IllegalStateException("invalid virtual directory file");
-		
-		JGVirtualDirectory virtualDir_ = new JGVirtualDirectory();
-		
-		Document vDocument_ = new SAXBuilder().build(file_);
-		Element rootElement_ = vDocument_.getRootElement();
-		
+	public static JGVirtualDirectory make(Element rootElement_) throws Exception{
 		if(!rootElement_.getName().equals(STR_ELEMENT_VIRTUALDIRECTORY)){
 			throw new IllegalStateException("invalid element name");
 		}
+		
+		JGVirtualDirectory virtualDir_ = new JGVirtualDirectory();
 		
 		virtualDir_._dataName = rootElement_.getAttributeValue(STR_ATTRIBUTE_DATANAME);
 		
@@ -120,6 +114,14 @@ public class JGVirtualDirectory extends JGDirectory{
 		}
 		
 		return virtualDir_;
+	}
+	
+	public static JGVirtualDirectory make(File file_) throws Exception{
+		if(file_ == null || !file_.isFile())
+			throw new IllegalStateException("invalid virtual directory file");
+		
+		Document vDocument_ = new SAXBuilder().build(file_);
+		return make(vDocument_.getRootElement());
 	}
 	public static JGVirtualDirectory make(String filePath_) throws Exception{
 		return make(new File(filePath_));

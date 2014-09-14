@@ -26,6 +26,17 @@ public class JGServiceMap extends JGDirectory{
 	public boolean isPrimary(){
 		return _isPrimary;
 	}
+	protected void setPrimary(boolean isPrimary_){
+		_isPrimary = isPrimary_;
+	}
+	
+	protected JGVirtualDirectory _virtualDirectory = null;
+	public JGVirtualDirectory getVirtualDirectory(){
+		return _virtualDirectory;
+	}
+	protected void setVirtualDirectory(JGVirtualDirectory virtualDirectoy_){
+		_virtualDirectory = virtualDirectoy_;
+	}
 	
 	public JGServiceMap(String name_, boolean isPrimary_){
 		super(name_, JGDirectoryType.Map);
@@ -34,6 +45,15 @@ public class JGServiceMap extends JGDirectory{
 	
 	public void addChild(JGDirectory directory_){
 		throw new RuntimeException("can't add directory to service map");
+	}
+	
+	@Override
+	protected boolean test(String path_){
+		if(_virtualDirectory != null){
+			return _virtualDirectory.test(path_);
+		}else{
+			return super.test(path_);
+		}
 	}
 	
 	protected ArrayList<JGActionClass> _actionClasses = new ArrayList<JGActionClass>();
@@ -152,6 +172,12 @@ public class JGServiceMap extends JGDirectory{
 		
 		JGServiceMap serviceMap_ = new JGServiceMap(JGFileUtils.removeSuffix(file_.getName())
 				,JGStringUtils.getBoolean(rootElement_.getAttributeValue(STR_ATTRIBUTE_ISPRIMARY), false));
+		
+		//add virtual directory
+		Element virtualDirectoryElement_ = rootElement_.getChild(JGVirtualDirectory.STR_ELEMENT_VIRTUALDIRECTORY);
+		if(virtualDirectoryElement_ != null){
+			serviceMap_.setVirtualDirectory(JGVirtualDirectory.make(virtualDirectoryElement_));
+		}
 		
 		//add action classes
 		Element actionClassesElement_ = rootElement_.getChild(STR_ELEMENT_ACTIONCLASSES);

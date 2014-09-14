@@ -144,8 +144,11 @@ public class JGServiceHandler{
 		}
 	}
 	
-	public Object handleService(JGServiceBox serviceBox_, String servicePath_, JGDirectory targetDirectory_, boolean onlyResult_) throws Exception{
-		JGDirectoryAnalysis directoryAnalysis_ = targetDirectory_.analyze(servicePath_);
+	public Object handleService(JGServiceBox serviceBox_, String basePath_, String servicePath_, boolean onlyResult_) throws Exception{
+		File servicePathFile_ = new File(basePath_, servicePath_);
+		servicePath_ = servicePathFile_.getCanonicalPath();
+		
+		JGDirectoryAnalysis directoryAnalysis_ = _rootDirectory.analyze(servicePath_);
 		JGDirectory lastDirectory_ = directoryAnalysis_.getLastDirectory();
 		JGServiceMap findedServiceMap_ = directoryAnalysis_.getFindedServiceMap();
 		JGService findedService_ = directoryAnalysis_.getFindedService();
@@ -156,7 +159,7 @@ public class JGServiceHandler{
 		if(findedService_ == null)
 			throw new JGServiceNotFoundException(servicePath_);
 		
-		if(targetDirectory_ == _rootDirectory){
+		if(basePath_.equals(JGMainConfig.sharedConfig().getKeySeparator())){
 			if(findedService_.isPrivate())
 				throw new JGRequestDeniedException("can't not access private service",servicePath_,findedService_);
 			
@@ -198,7 +201,7 @@ public class JGServiceHandler{
 				return resultObject_;
 			
 		}else if(isForwardPath_){
-			resultObject_ = handleService(serviceBox_, _convertMappingRegex(forwardPath_, serviceBox_), lastDirectory_, true);
+			resultObject_ = handleService(serviceBox_, directoryAnalysis_.getDirectoryPath() , _convertMappingRegex(forwardPath_, serviceBox_), true);
 		}else if(otherResult_ == null){
 			throw new JGInvalidServiceException("invalid service",servicePath_, actionClassName_, mappingMethod_, forwardPath_);
 		}
@@ -236,17 +239,14 @@ public class JGServiceHandler{
 				else serviceBox_.forward(rPage_);
 				return resultObject_;
 			}else if(rForwardPath_ != null){
-				return handleService(serviceBox_, _convertMappingRegex(rForwardPath_, serviceBox_), lastDirectory_);
+				return handleService(serviceBox_, directoryAnalysis_.getDirectoryPath(), _convertMappingRegex(rForwardPath_, serviceBox_));
 			}else throw new JGResultNotDefinedException("result not defined", servicePath_, resultCode_);
 		}
 		
 		return null;
 	}
-	public Object handleService(JGServiceBox serviceBox_, String servicePath_, JGDirectory targetDirectory_) throws Exception{
-		return handleService(serviceBox_, servicePath_, targetDirectory_, false);
-	}
-	public Object handleService(JGServiceBox serviceBox_, String servicePath_) throws Exception{
-		return handleService(serviceBox_, servicePath_, _rootDirectory);
+	public Object handleService(JGServiceBox serviceBox_, String basePath_, String servicePath_) throws Exception{
+		return handleService(serviceBox_, basePath_, servicePath_, false);
 	}
 	
 	private String _convertMappingRegex(String destination_, JGServiceBox serviceBox_) throws Exception{

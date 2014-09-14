@@ -8,6 +8,16 @@ import com.jg.service.element.JGDirectory.JGDirectoryType;
 
 public class JGDirectoryAnalysis{
 	
+	protected String _directoryPath;
+	public String getDirectoryPath(){
+		return _directoryPath;
+	}
+	
+	protected String _servicePattern;
+	public String getServicePattern(){
+		return _servicePattern;
+	}
+	
 	protected JGDirectory _lastDirectory;
 	protected void setLastDirectory(JGDirectory directory_){
 		_lastDirectory = directory_;
@@ -38,7 +48,9 @@ public class JGDirectoryAnalysis{
 		return _virtualDirectoryData;
 	}
 	
-	protected JGDirectoryAnalysis(JGDirectory lastDirectory_, JGService findedService_, HashMap<String, String> virtualDirectoryData_){
+	protected JGDirectoryAnalysis(String directoryPath_, String servicePattern_, JGDirectory lastDirectory_, JGService findedService_, HashMap<String, String> virtualDirectoryData_){
+		_directoryPath = directoryPath_;
+		_servicePattern = servicePattern_;
 		_lastDirectory = lastDirectory_;
 		_findedService = findedService_;
 		_virtualDirectoryData = virtualDirectoryData_;

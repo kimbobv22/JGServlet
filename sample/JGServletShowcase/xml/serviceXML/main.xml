@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <serviceMap isPrimary="true">
+	
+	<!-- Service map virtualization -->
+	<!--
+	<virtualDirectory dataName="patten">
+		
+		<includes>
+			<pattern>main</pattern>
+		</includes>
+		
+		<excludes>
+			<pattern>admin</pattern>
+			<pattern>user</pattern>
+			<pattern>main2</pattern>
+		</excludes>
+		
+	</virtualDirectory>
+	-->
 
 	<actionClasses>
 		<class name="basicAction">sample.action.BasicAction</class>

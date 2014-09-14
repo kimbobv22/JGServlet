@@ -14,9 +14,6 @@ public class JGDirectory{
 		Map,
 	}
 	
-	static public String STR_RESERVED_WORD_CURRENT_DIR = ".";
-	static public String STR_RESERVED_WORD_PREV_DIR = "..";
-	
 	protected String _uuid = UUID.randomUUID().toString();
 	public String getUUID(){
 		return _uuid;
@@ -37,10 +34,16 @@ public class JGDirectory{
 	public String getName(){
 		return _name;
 	}
+	protected void setName(String name_){
+		_name = name_;
+	}
 	
 	protected JGDirectoryType _directoryType;
 	public JGDirectoryType getDirectoryType(){
 		return _directoryType;
+	}
+	protected void setDirectoryType(JGDirectoryType directoryType_){
+		_directoryType = directoryType_;
 	}
 	
 	ArrayList<JGDirectory> _children = new ArrayList<JGDirectory>();
@@ -124,18 +127,6 @@ public class JGDirectory{
 		return null;
 	}
 	
-	public JGDirectory getRoot(){
-		JGDirectory currentDir_ = this;
-		while(currentDir_.hasParent()){
-			JGDirectory parent_ = currentDir_.getParent();
-			if(parent_ == null)
-				return currentDir_;
-			currentDir_ = parent_; 
-		}
-		
-		return currentDir_;
-	}
-	
 	protected boolean test(String path_){
 		return _name.equals(path_);
 	}
@@ -159,17 +150,13 @@ public class JGDirectory{
 		boolean leftPath_ = true;
 		int length_ = splitDirs_.length;
 		JGDirectory tempDir_ = null;
-		JGDirectory currentDir_ = path_.indexOf(keySeparator_) == 0 ? getRoot() : this;
+		JGDirectory currentDir_ = this;
+		String directoryPath_ = path_;
+		String servicePattern_ = null;
 		
 		for(int index_=0;index_<length_;++index_){
 			String directoryName_ = splitDirs_[index_];
-			if(directoryName_.equals(STR_RESERVED_WORD_CURRENT_DIR)){
-				tempDir_ = currentDir_;
-			}else if(directoryName_.equals(STR_RESERVED_WORD_PREV_DIR)){
-				tempDir_ = currentDir_.getParent();
-			}else{
-				tempDir_ = currentDir_.getChildWithName(directoryName_);
-			}
+			tempDir_ = currentDir_.getChildWithName(directoryName_);
 			
 			if(tempDir_ != null){
 				leftPath_ = ((length_ - (index_+1)) > 0);
@@ -187,7 +174,8 @@ public class JGDirectory{
 							if(index_+1 != pIndex_) pattern_.append("/");
 							pattern_.append(splitDirs_[pIndex_]);
 						}
-						findedService_ = findedServiceMap_.findService(pattern_.toString());
+						servicePattern_ = pattern_.toString();
+						findedService_ = findedServiceMap_.findService(servicePattern_);
 					}else findedService_ = findedServiceMap_.getPrimaryService();
 					currentDir_ = tempDir_;
 					break;
@@ -211,7 +199,11 @@ public class JGDirectory{
 			}
 		}
 		
-		return new JGDirectoryAnalysis(currentDir_, findedService_, virtualDirectoryData_);
+		if(servicePattern_ != null){
+			directoryPath_ = path_.substring(0, path_.indexOf(servicePattern_));
+		}
+		
+		return new JGDirectoryAnalysis(directoryPath_, servicePattern_, currentDir_, findedService_, virtualDirectoryData_);
 	}
 	public void moveChildrenTo(JGDirectory directory_){
 		int countOfChildren_ = countOfChildren();
@@ -225,8 +217,8 @@ public class JGDirectory{
 	}
 	
 	protected JGDirectory(String name_, JGDirectoryType directoryType_){
-		_name = name_;
-		_directoryType = directoryType_;
+		setName(name_);
+		setDirectoryType(directoryType_);
 	}
 	public JGDirectory(String name_){
 		this(name_, JGDirectoryType.Normal);
