@@ -10,6 +10,21 @@
 		<file-image-compression>true</file-image-compression>
 		<file-image-compression-regexp>[\w\-\.]+[\.](jpg|jpeg|png)</file-image-compression-regexp>
 	</common>
+	
+	<database name="main" isPrimary="true">
+		<jdbc-class>com.mysql.jdbc.Driver</jdbc-class>
+		<url>url here</url>
+		<user-name>user name</user-name>
+		<password>password</password>
+		<character-encoding>utf8</character-encoding>
+	</database>
+	<database name="sub">
+		<jdbc-class>com.mysql.jdbc.Driver</jdbc-class>
+		<url>url here</url>
+		<user-name>user name</user-name>
+		<password>password</password>
+		<character-encoding>utf8</character-encoding>
+	</database>
 		
 	<custom>
 		<option name="customValue">customValue</option>

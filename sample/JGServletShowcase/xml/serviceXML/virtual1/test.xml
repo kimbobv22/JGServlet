@@ -6,6 +6,7 @@
 		<class name="ajaxAction">sample.action.AjaxAction</class>
 		<class name="multipartAction">sample.action.MultipartAction</class>
 		<class name="datasetAction">sample.action.DatasetAction</class>
+		<class name="DBAction">sample.action.DBAction</class>
 	</actionClasses>
 	
 	<!-- post service -->
@@ -23,5 +24,8 @@
 	<!-- dataset sample -->
 	<service pattern="getDataset" actionClassName="datasetAction" mappingMethod="getDataset" />
 	<service pattern="storeDataset" actionClassName="datasetAction" mappingMethod="storeDataset" />
+	
+	<!-- DB Connection sample -->
+	<service pattern="testDBConnection" actionClassName="DBAction" mappingMethod="testConnection" />
 	
 </serviceMap>

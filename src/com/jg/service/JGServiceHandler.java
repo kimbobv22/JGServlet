@@ -60,15 +60,15 @@ public class JGServiceHandler{
 		return _rootDirectory;
 	}
 	
-	protected ArrayList<JGServiceFilter> _serviceFilters = new ArrayList<JGServiceFilter>();
+	protected ArrayList<Class<? extends JGServiceFilter>> _serviceFilters = new ArrayList<Class<? extends JGServiceFilter>>();
 	public int countOfFilters(){
 		return _serviceFilters.size();
 	}
 	
-	public void addFilter(JGServiceFilter serviceFilter_){
+	public void addFilter(Class<? extends JGServiceFilter> serviceFilter_){
 		_serviceFilters.add(serviceFilter_);
 	}
-	public JGServiceFilter getFilter(int index_){
+	public Class<? extends JGServiceFilter> getFilter(int index_){
 		return _serviceFilters.get(index_);
 	}
 	
@@ -167,7 +167,8 @@ public class JGServiceHandler{
 			
 			int countOfFilters_ = countOfFilters();
 			for(int fIndex_=0;fIndex_<countOfFilters_;++fIndex_){
-				JGServiceFilter serviceFilter_ = getFilter(fIndex_);
+				Class<? extends JGServiceFilter> serviceFilterClass_ = getFilter(fIndex_);
+				JGServiceFilter serviceFilter_ = serviceFilterClass_.newInstance();
 				if(serviceFilter_.acceptFilter(serviceBox_))
 					serviceFilter_.doFilter(serviceBox_);
 			}

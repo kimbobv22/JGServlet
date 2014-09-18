@@ -70,6 +70,22 @@ function storeDataset(){
 		}
 	});
 }
+
+function testDBConnection(){
+	JGService.ajax("main",{
+		appendPath : "anyword/anyword1/test/testDBConnection"
+	},{
+		data : {
+			DBConfigName : $("#dbConfigName").val()
+		},
+		success : function(result_){
+			console.log(result_);
+		},error : function(response_){
+			console.error("connection error");
+		}
+	});
+}
+
 $(document).ready(function(){
 	$("#datasetSampleView").JGDatasetUI();
 	getDataset();
@@ -104,6 +120,10 @@ $(document).ready(function(){
 		</tbody>
 	</table>
 	<a href="javascript:getDataset();">get dataset</a> / <a href="javascript:storeDataset();">send dataset</a>
+	
+	<br/>
+	<h2>JGDataset Transaction Sample</h2>
+	DB Config Name : <input type="text" id="dbConfigName"><a href="javascript:testDBConnection();">test DB Connection</a>
 	
 </body>
 </html>
